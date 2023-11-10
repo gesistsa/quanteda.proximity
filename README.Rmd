@@ -1,0 +1,76 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# quanteda.dist
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of quanteda.dist is to add a hacky layer of distance vectors into the `tokens` object of `quanteda`.
+
+## Installation
+
+You can install the development version of quanteda.dist like so:
+
+``` r
+remotes::install_github("gesistsa/quanteda.dist")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(quanteda)
+library(quanteda.dist)
+
+testdata <- c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza conflict, said on Wednesday the Palestinian militant group Hamas was not a terrorist organisation but a liberation group fighting to protect Palestinian lands.",
+              "EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros.")
+```
+
+```{r tokens_dist}
+res <- testdata %>% tokens() %>% tokens_tolower() %>%
+    tokens_dist(targets = "turkish")
+res
+```
+
+You can access the distance vectors by
+
+```{r distance_vectors}
+meta(res, "dist")
+```
+
+A chunky example to calculate the total inverse distance weighted frequency of "terror*" words.
+
+```{r}
+terror_dict <- dictionary(list(TERROR = c("terror*")))
+
+sum(as.numeric(tokens_lookup(res, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res, "dist")[[1]]))
+
+sum(as.numeric(tokens_lookup(res, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res, "dist")[[2]]))
+```
+
+How about changing the target to "Hamas"?
+
+```{r}
+res2 <- res %>% tokens_dist(targets = "hamas")
+res2
+```
+
+```{r}
+sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res2, "dist")[[1]]))
+
+sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res2, "dist")[[2]]))
+```
