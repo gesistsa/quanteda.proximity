@@ -7,8 +7,8 @@
 
 <!-- badges: end -->
 
-The goal of quanteda.dist is to hack a layer of distance vectors to the
-`tokens` object of `quanteda`.
+The goal of quanteda.dist is to add a hacky layer of distance vectors
+into the `tokens` object of `quanteda`.
 
 ## Installation
 
@@ -68,8 +68,8 @@ meta(res, "dist")
 #> [26] 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44
 ```
 
-A chunky example to calculate the total distance-weighted frequency of
-"terror\*" words.
+A chunky example to calculate the total inverse distance weighted
+frequency of "terror\*" words.
 
 ``` r
 terror_dict <- dictionary(list(TERROR = c("terror*")))
@@ -81,7 +81,7 @@ sum(as.numeric(tokens_lookup(res, terror_dict, exclusive = FALSE)[[2]] == "TERRO
 #> [1] 0.04545455
 ```
 
-How about changing the target to Hamas?
+How about changing the target to “Hamas”?
 
 ``` r
 res2 <- res %>% tokens_dist(targets = "hamas")
@@ -108,4 +108,44 @@ sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[1]] == "TERR
 
 sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res2, "dist")[[2]]))
 #> [1] 0.04545455
+```
+
+Can we use two targets, e.g. “EU” and “Brussels”?
+
+``` r
+res3 <- res %>% tokens_dist(targets = c("eu", "brussels"))
+res3
+#> Tokens consisting of 2 documents.
+#> text1 :
+#>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
+#>  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      
+#> [ ... and 26 more ]
+#> 
+#> text2 :
+#>  [1] "eu"           "policymakers" "proposed"     "the"          "new"         
+#>  [6] "agency"       "in"           "2021"         "to"           "stop"        
+#> [11] "financial"    "firms"       
+#> [ ... and 31 more ]
+#> 
+#> With distance vector.
+#> targets:  eu brussels
+```
+
+``` r
+meta(res3, "dist")
+#> $text1
+#>  [1] 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39
+#> [26] 39 39 39 39 39 39 39 39 39 39 39 39 39
+#> 
+#> $text2
+#>  [1]  1  2  3  4  5  6  7  8  9 10  9  8  7  6  5  4  3  2  1  2  3  4  5  6  5
+#> [26]  4  3  2  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+```
+
+``` r
+sum(as.numeric(tokens_lookup(res3, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res3, "dist")[[1]]))
+#> [1] 0.02564103
+
+sum(as.numeric(tokens_lookup(res3, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res3, "dist")[[2]]))
+#> [1] 0.4583333
 ```

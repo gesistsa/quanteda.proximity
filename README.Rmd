@@ -74,3 +74,21 @@ sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[1]] == "TERR
 
 sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res2, "dist")[[2]]))
 ```
+
+Can we use two targets, e.g. "EU" and "Brussels"?
+
+```{r}
+res3 <- res %>% tokens_dist(targets = c("eu", "brussels"))
+res3
+```
+
+```{r}
+meta(res3, "dist")
+```
+
+```{r}
+sum(as.numeric(tokens_lookup(res3, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res3, "dist")[[1]]))
+
+sum(as.numeric(tokens_lookup(res3, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res3, "dist")[[2]]))
+```
+
