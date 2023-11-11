@@ -43,6 +43,34 @@ print.tokens_with_dist <- function(x, ...) {
     y <- x
     class(y) <- "tokens"
     print(y, ...)
-    cat("With distance vector.\n")
+    cat("With distance vector(s).\n")
     cat("targets: ", quanteda::meta(x, field = "targets"), "\n")
+}
+
+#' @importFrom quanteda dfm
+#' @method dfm tokens_with_dist
+#' @export
+dfm.tokens_with_dist <- function(x, ...) {
+    vec <- c()
+    i_pos <- c()
+    j_pos <- c()
+    feat_name <- attr(x, "types")
+    for (i in seq_along(x)) {
+        cur_dist <- meta(x, "dist")[[i]]
+        cur_feat <- match(x[[i]], feat_name)
+        unique_feat <- unique(cur_feat)
+        total_vec <- rep(0, length(unique_feat))
+        for(j in seq_along(unique_feat)) {
+            cur_feat_j <- unique_feat[j]
+            total_vec[j] <- sum(cur_dist[cur_feat == cur_feat_j])
+        }
+        ## TODO:: how to assign weight
+        total_vec <- 1 / total_vec
+        vec <- c(vec, total_vec)
+        i_pos <- c(i_pos, rep(i, length(total_vec)))
+        j_pos <- c(j_pos, unique_feat)
+    }
+    quanteda::as.dfm(Matrix::sparseMatrix(i = i_pos, j = j_pos,
+                                      x = vec,
+                                      dimnames = list(quanteda::docnames(x), feat_name)))
 }
