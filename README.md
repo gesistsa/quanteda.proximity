@@ -51,7 +51,7 @@ res
 #> [11] "financial"    "firms"       
 #> [ ... and 31 more ]
 #> 
-#> With distance vector.
+#> With distance vector(s).
 #> targets:  turkish
 ```
 
@@ -68,17 +68,32 @@ meta(res, "dist")
 #> [26] 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44
 ```
 
-A chunky example to calculate the total inverse distance weighted
+The `tokens` object with distance vectors can be converted to (weighted)
+`dfm`. Currently, the weight is assigned by the inverting the distance.
+
+``` r
+dfm(res)
+#> Document-feature matrix of: 2 documents, 64 features (45.31% sparse) and 0 docvars.
+#>        features
+#> docs    turkish president    tayyip erdogan    ,         in       his strongest
+#>   text1       1       0.5 0.3333333    0.25 0.05 0.16666667 0.1428571     0.125
+#>   text2       0       0   0            0    0    0.02272727 0             0    
+#>        features
+#> docs     comments yet
+#>   text1 0.1111111 0.1
+#>   text2 0         0  
+#> [ reached max_nfeat ... 54 more features ]
+```
+
+A clumsy example to calculate the total inverse distance weighted
 frequency of "terror\*" words.
 
 ``` r
 terror_dict <- dictionary(list(TERROR = c("terror*")))
 
-sum(as.numeric(tokens_lookup(res, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res, "dist")[[1]]))
-#> [1] 0.03703704
-
-sum(as.numeric(tokens_lookup(res, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res, "dist")[[2]]))
-#> [1] 0.04545455
+dfm(res) %>% dfm_lookup(terror_dict) %>% rowSums()
+#>      text1      text2 
+#> 0.03703704 0.04545455
 ```
 
 How about changing the target to “Hamas”?
@@ -98,16 +113,14 @@ res2
 #> [11] "financial"    "firms"       
 #> [ ... and 31 more ]
 #> 
-#> With distance vector.
+#> With distance vector(s).
 #> targets:  hamas
 ```
 
 ``` r
-sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res2, "dist")[[1]]))
-#> [1] 0.2
-
-sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res2, "dist")[[2]]))
-#> [1] 0.04545455
+dfm(res2) %>% dfm_lookup(terror_dict) %>% rowSums()
+#>      text1      text2 
+#> 0.20000000 0.04545455
 ```
 
 Can we use two targets, e.g. “EU” and “Brussels”?
@@ -127,7 +140,7 @@ res3
 #> [11] "financial"    "firms"       
 #> [ ... and 31 more ]
 #> 
-#> With distance vector.
+#> With distance vector(s).
 #> targets:  eu brussels
 ```
 
@@ -143,9 +156,7 @@ meta(res3, "dist")
 ```
 
 ``` r
-sum(as.numeric(tokens_lookup(res3, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res3, "dist")[[1]]))
-#> [1] 0.02564103
-
-sum(as.numeric(tokens_lookup(res3, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res3, "dist")[[2]]))
-#> [1] 0.4583333
+dfm(res3) %>% dfm_lookup(terror_dict) %>% rowSums()
+#>      text1      text2 
+#> 0.02564103 0.45833333
 ```

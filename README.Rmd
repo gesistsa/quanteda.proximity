@@ -52,14 +52,18 @@ You can access the distance vectors by
 meta(res, "dist")
 ```
 
-A chunky example to calculate the total inverse distance weighted frequency of "terror*" words.
+The `tokens` object with distance vectors can be converted to (weighted) `dfm`. Currently, the weight is assigned by the inverting the distance.
+
+```{r dfm}
+dfm(res)
+```
+
+A clumsy example to calculate the total inverse distance weighted frequency of "terror*" words.
 
 ```{r}
 terror_dict <- dictionary(list(TERROR = c("terror*")))
 
-sum(as.numeric(tokens_lookup(res, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res, "dist")[[1]]))
-
-sum(as.numeric(tokens_lookup(res, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res, "dist")[[2]]))
+dfm(res) %>% dfm_lookup(terror_dict) %>% rowSums()
 ```
 
 How about changing the target to "Hamas"?
@@ -70,9 +74,7 @@ res2
 ```
 
 ```{r}
-sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res2, "dist")[[1]]))
-
-sum(as.numeric(tokens_lookup(res2, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res2, "dist")[[2]]))
+dfm(res2) %>% dfm_lookup(terror_dict) %>% rowSums()
 ```
 
 Can we use two targets, e.g. "EU" and "Brussels"?
@@ -87,8 +89,5 @@ meta(res3, "dist")
 ```
 
 ```{r}
-sum(as.numeric(tokens_lookup(res3, terror_dict, exclusive = FALSE)[[1]] == "TERROR") * (1 / meta(res3, "dist")[[1]]))
-
-sum(as.numeric(tokens_lookup(res3, terror_dict, exclusive = FALSE)[[2]] == "TERROR") * (1 / meta(res3, "dist")[[2]]))
+dfm(res3) %>% dfm_lookup(terror_dict) %>% rowSums()
 ```
-
