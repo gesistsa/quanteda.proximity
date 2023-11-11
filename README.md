@@ -20,26 +20,23 @@ remotes::install_github("gesistsa/quanteda.dist")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ``` r
-library(quanteda)
-#> Package version: 3.3.1
-#> Unicode version: 14.0
-#> ICU version: 70.1
-#> Parallel computing: 8 of 8 threads used.
-#> See https://quanteda.io for tutorials and examples.
+suppressPackageStartupMessages(library(quanteda))
 library(quanteda.dist)
 
-testdata <- c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza conflict, said on Wednesday the Palestinian militant group Hamas was not a terrorist organisation but a liberation group fighting to protect Palestinian lands.",
-              "EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros.")
+testdata <-
+c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza conflict, said on Wednesday the Palestinian militant group Hamas was not a terrorist organisation but a liberation group fighting to protect Palestinian lands.",
+"EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros.")
 ```
+
+`tokens_dist()` generates the distance vectors and stores them as a
+`docvar` (document variable).
 
 ``` r
 res <- testdata %>% tokens() %>% tokens_tolower() %>%
     tokens_dist(targets = "turkish")
 res
-#> Tokens consisting of 2 documents.
+#> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
 #>  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      
@@ -58,7 +55,7 @@ res
 You can access the distance vectors by
 
 ``` r
-meta(res, "dist")
+docvars(res, "dist")
 #> $text1
 #>  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 #> [26] 26 27 28 29 30 31 32 33 34 35 36 37 38
@@ -68,8 +65,9 @@ meta(res, "dist")
 #> [26] 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44
 ```
 
-The `tokens` object with distance vectors can be converted to (weighted)
-`dfm`. Currently, the weight is assigned by the inverting the distance.
+The `tokens` object with distance vectors can be converted to a
+(weighted) `dfm` (Document-Feature Matrix). Currently, the weight is
+assigned by inverting the distance.
 
 ``` r
 dfm(res)
@@ -101,7 +99,7 @@ How about changing the target to “Hamas”?
 ``` r
 res2 <- res %>% tokens_dist(targets = "hamas")
 res2
-#> Tokens consisting of 2 documents.
+#> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
 #>  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      
@@ -128,7 +126,7 @@ Can we use two targets, e.g. “EU” and “Brussels”?
 ``` r
 res3 <- res %>% tokens_dist(targets = c("eu", "brussels"))
 res3
-#> Tokens consisting of 2 documents.
+#> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
 #>  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      
@@ -145,7 +143,7 @@ res3
 ```
 
 ``` r
-meta(res3, "dist")
+docvars(res3, "dist")
 #> $text1
 #>  [1] 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39
 #> [26] 39 39 39 39 39 39 39 39 39 39 39 39 39
