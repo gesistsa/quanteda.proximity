@@ -30,15 +30,16 @@ remotes::install_github("gesistsa/quanteda.dist")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ```{r example}
-library(quanteda)
+suppressPackageStartupMessages(library(quanteda))
 library(quanteda.dist)
 
-testdata <- c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza conflict, said on Wednesday the Palestinian militant group Hamas was not a terrorist organisation but a liberation group fighting to protect Palestinian lands.",
-              "EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros.")
+testdata <-
+c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza conflict, said on Wednesday the Palestinian militant group Hamas was not a terrorist organisation but a liberation group fighting to protect Palestinian lands.",
+"EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros.")
 ```
+
+`tokens_dist()` generates the distance vectors and stores them as a `docvar` (document variable).
 
 ```{r tokens_dist}
 res <- testdata %>% tokens() %>% tokens_tolower() %>%
@@ -49,10 +50,10 @@ res
 You can access the distance vectors by
 
 ```{r distance_vectors}
-meta(res, "dist")
+docvars(res, "dist")
 ```
 
-The `tokens` object with distance vectors can be converted to (weighted) `dfm`. Currently, the weight is assigned by the inverting the distance.
+The `tokens` object with distance vectors can be converted to a (weighted) `dfm` (Document-Feature Matrix). Currently, the weight is assigned by inverting the distance.
 
 ```{r dfm}
 dfm(res)
@@ -85,7 +86,7 @@ res3
 ```
 
 ```{r}
-meta(res3, "dist")
+docvars(res3, "dist")
 ```
 
 ```{r}

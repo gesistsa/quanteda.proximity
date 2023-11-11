@@ -29,7 +29,8 @@ get_dist <- function(x, targets, get_min = TRUE) {
 #' @export
 tokens_dist <- function(x, targets, get_min = TRUE) {
     toks <- x
-    quanteda::meta(toks, field = "dist") <- get_dist(x = toks, targets = targets, get_min = get_min)
+    dist <- get_dist(x = toks, targets = targets, get_min = get_min)
+    quanteda::docvars(toks)$dist <- I(dist)
     quanteda::meta(toks, field = "targets") <- targets
     quanteda::meta(toks, field = "get_min") <- get_min
     class(toks) <- c("tokens_with_dist", "tokens")
@@ -56,7 +57,7 @@ dfm.tokens_with_dist <- function(x, ...) {
     j_pos <- c()
     feat_name <- attr(x, "types")
     for (i in seq_along(x)) {
-        cur_dist <- meta(x, "dist")[[i]]
+        cur_dist <- quanteda::docvars(x, "dist")[[i]]
         cur_feat <- match(x[[i]], feat_name)
         unique_feat <- unique(cur_feat)
         total_vec <- rep(0, length(unique_feat))
