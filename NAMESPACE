@@ -2,6 +2,5 @@
 
 S3method(dfm,tokens_with_dist)
 S3method(print,tokens_with_dist)
-export(get_dist)
 export(tokens_dist)
 importFrom(quanteda,dfm)

@@ -66,22 +66,53 @@ docvars(res, "dist")
 ```
 
 The `tokens` object with distance vectors can be converted to a
-(weighted) `dfm` (Document-Feature Matrix). Currently, the weight is
+(weighted) `dfm` (Document-Feature Matrix). The default weight is
 assigned by inverting the distance.
 
 ``` r
 dfm(res)
 #> Document-feature matrix of: 2 documents, 64 features (45.31% sparse) and 0 docvars.
 #>        features
-#> docs    turkish president    tayyip erdogan    ,         in       his strongest
-#>   text1       1       0.5 0.3333333    0.25 0.05 0.16666667 0.1428571     0.125
-#>   text2       0       0   0            0    0    0.02272727 0             0    
+#> docs    turkish president    tayyip erdogan         ,         in       his
+#>   text1       1       0.5 0.3333333    0.25 0.2666667 0.16666667 0.1428571
+#>   text2       0       0   0            0    0         0.02272727 0        
 #>        features
-#> docs     comments yet
-#>   text1 0.1111111 0.1
-#>   text2 0         0  
+#> docs    strongest  comments yet
+#>   text1     0.125 0.1111111 0.1
+#>   text2     0     0         0  
 #> [ reached max_nfeat ... 54 more features ]
 ```
+
+You have the freedom to change to another weight function. For example,
+not inverting.
+
+``` r
+dfm(res, weight_function = identity)
+#> Document-feature matrix of: 2 documents, 64 features (45.31% sparse) and 0 docvars.
+#>        features
+#> docs    turkish president tayyip erdogan  , in his strongest comments yet
+#>   text1       1         2      3       4 20  6   7         8        9  10
+#>   text2       0         0      0       0  0 44   0         0        0   0
+#> [ reached max_nfeat ... 54 more features ]
+```
+
+Or any custom function
+
+``` r
+dfm(res, weight_function = function(x) { 1 / x^2 })
+#> Document-feature matrix of: 2 documents, 64 features (45.31% sparse) and 0 docvars.
+#>        features
+#> docs    turkish president    tayyip erdogan          ,           in        his
+#>   text1       1      0.25 0.1111111  0.0625 0.04444444 0.0277777778 0.02040816
+#>   text2       0      0    0          0      0          0.0005165289 0         
+#>        features
+#> docs    strongest   comments  yet
+#>   text1  0.015625 0.01234568 0.01
+#>   text2  0        0          0   
+#> [ reached max_nfeat ... 54 more features ]
+```
+
+## Application
 
 A clumsy example to calculate the total inverse distance weighted
 frequency of "terror\*" words.
