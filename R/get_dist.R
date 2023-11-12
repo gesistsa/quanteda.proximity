@@ -51,11 +51,13 @@ print.tokens_with_dist <- function(x, ...) {
 #' @importFrom quanteda dfm
 #' @method dfm tokens_with_dist
 #' @export
-dfm.tokens_with_dist <- function(x, ...) {
+dfm.tokens_with_dist <- function(x, remove_docvars_dist = TRUE, ...) {
     vec <- c()
     i_pos <- c()
     j_pos <- c()
     feat_name <- attr(x, "types")
+    x_attrs <- attributes(x)
+    x_docvars <- docvars(x)
     for (i in seq_along(x)) {
         cur_dist <- quanteda::docvars(x, "dist")[[i]]
         cur_feat <- match(x[[i]], feat_name)
@@ -71,7 +73,13 @@ dfm.tokens_with_dist <- function(x, ...) {
         i_pos <- c(i_pos, rep(i, length(total_vec)))
         j_pos <- c(j_pos, unique_feat)
     }
-    quanteda::as.dfm(Matrix::sparseMatrix(i = i_pos, j = j_pos,
-                                      x = vec,
-                                      dimnames = list(quanteda::docnames(x), feat_name)))
+    output <- quanteda::as.dfm(Matrix::sparseMatrix(i = i_pos, j = j_pos,
+                                                    x = vec,
+                                                    dimnames = list(quanteda::docnames(x), feat_name)))
+    attributes(output)[["meta"]] <- x_attrs[["meta"]]
+    if (remove_docvars_dist) {
+        x_docvars$dist <- NULL
+    }
+    docvars(output) <- x_docvars
+    return(output)
 }
