@@ -3,7 +3,6 @@
 }
 
 .get_min <- function(pos, x) {
-    ##print(pos)
     min(purrr::map_dbl(x, pos))
 }
 
@@ -20,7 +19,6 @@
     return(res)
 }
 
-#' @export
 get_dist <- function(x, targets, get_min = TRUE) {
     targets_poss <- which(attr(x, "types") %in% targets)
     purrr::map(x, .get_dist, targets_poss = targets_poss, get_min = get_min)
