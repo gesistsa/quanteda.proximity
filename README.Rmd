@@ -53,11 +53,25 @@ You can access the distance vectors by
 docvars(res, "dist")
 ```
 
-The `tokens` object with distance vectors can be converted to a (weighted) `dfm` (Document-Feature Matrix). Currently, the weight is assigned by inverting the distance.
+The `tokens` object with distance vectors can be converted to a (weighted) `dfm` (Document-Feature Matrix). The default weight is assigned by inverting the distance.
 
 ```{r dfm}
 dfm(res)
 ```
+
+You have the freedom to change to another weight function. For example, not inverting.
+
+```{r dfm2}
+dfm(res, weight_function = identity)
+```
+
+Or any custom function
+
+```{r dfm3}
+dfm(res, weight_function = function(x) { 1 / x^2 })
+```
+
+## Application
 
 A clumsy example to calculate the total inverse distance weighted frequency of "terror*" words.
 
