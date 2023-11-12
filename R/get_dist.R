@@ -37,7 +37,6 @@ tokens_dist <- function(x, targets, get_min = TRUE) {
     return(toks)
 }
 
-
 #' @method print tokens_with_dist
 #' @export
 print.tokens_with_dist <- function(x, ...) {
@@ -51,8 +50,9 @@ print.tokens_with_dist <- function(x, ...) {
 #' @importFrom quanteda dfm
 #' @method dfm tokens_with_dist
 #' @export
-dfm.tokens_with_dist <- function(x, remove_docvars_dist = TRUE, ...) {
-    vec <- c()
+dfm.tokens_with_dist <- function(x, remove_docvars_dist = TRUE,
+                                 weight_function = function(x) {1 / x}, ...) {
+    vec <- c() ## value (x) in the sparseMatrix
     i_pos <- c()
     j_pos <- c()
     feat_name <- attr(x, "types")
@@ -65,10 +65,10 @@ dfm.tokens_with_dist <- function(x, remove_docvars_dist = TRUE, ...) {
         total_vec <- rep(0, length(unique_feat))
         for(j in seq_along(unique_feat)) {
             cur_feat_j <- unique_feat[j]
-            total_vec[j] <- sum(cur_dist[cur_feat == cur_feat_j])
+            cur_vec <- cur_dist[cur_feat == cur_feat_j]
+            cur_vec <- weight_function(cur_vec)
+            total_vec[j] <- sum(cur_vec)
         }
-        ## TODO:: how to assign weight
-        total_vec <- 1 / total_vec
         vec <- c(vec, total_vec)
         i_pos <- c(i_pos, rep(i, length(total_vec)))
         j_pos <- c(j_pos, unique_feat)
