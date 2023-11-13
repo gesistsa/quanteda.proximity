@@ -4,7 +4,12 @@
 \alias{tokens_dist}
 \title{Extract Distance Information}
 \usage{
-tokens_dist(x, targets, get_min = TRUE)
+tokens_dist(
+  x,
+  targets,
+  get_min = TRUE,
+  valuetype = c("glob", "regex", "fixed")
+)
 }
 \arguments{
 \item{x}{a \code{tokens} object}
@@ -12,6 +17,8 @@ tokens_dist(x, targets, get_min = TRUE)
 \item{targets}{a character vector of anchor words}
 
 \item{get_min}{logical, whether to return only the minimum distance or raw distance information; it is more relevant when \code{targets} have more than one word. See details.}
+
+\item{valuetype}{See \link[quanteda:valuetype]{quanteda::valuetype}}
 }
 \value{
 a \code{tokens_with_dist} object. It is a derivative of \code{\link[quanteda:tokens]{quanteda::tokens()}}, i.e. all \verb{token_*} functions still work. A \code{tokens_with_dist} has a modified \code{\link[=print]{print()}} method. Also, additional data slots are included
@@ -31,7 +38,7 @@ It is recommended to conduct all text maniputation tasks with all \verb{tokens_*
 \examples{
 library(quanteda)
 ukimg_eu <- data_char_ukimmig2010 \%>\% tokens(remove_punct = TRUE) \%>\%
-tokens_tolower() \%>\% tokens_dist(c("eu", "europe", "european"))
+tokens_tolower() \%>\% tokens_dist(c("eu", "euro*"))
 ukimg_eu \%>\% dfm() \%>\% dfm_select(c("immig*", "migr*")) \%>\% rowSums() \%>\% sort()
 ## compare with
 data_char_ukimmig2010 \%>\% tokens(remove_punct = TRUE) \%>\% tokens_tolower() \%>\%
