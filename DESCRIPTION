@@ -1,10 +1,10 @@
 Package: quanteda.dist
-Title: What the Package Does (One Line, Title Case)
+Title: Distance-based Weighting Scheme for the Quantitative Analysis of Textual Data
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person("Chung-hong", "Chan", , "chainsawtiney@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-6232-7530"))
+Description: Extract the relative distance between words and use the information to weight the frequency information in a Document-Feature Matrix.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
