@@ -49,6 +49,9 @@ get_dist <- function(x, targets, get_min = TRUE) {
 #' @seealso [dfm.tokens_with_dist()] [quanteda::tokens()]
 #' @export
 tokens_dist <- function(x, targets, get_min = TRUE) {
+    if (!inherits(x, "tokens")) {
+        stop("x is not a `tokens` object.", call. = FALSE)
+    }
     toks <- x
     dist <- get_dist(x = toks, targets = targets, get_min = get_min)
     quanteda::docvars(toks)$dist <- I(dist)
