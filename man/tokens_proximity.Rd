@@ -8,7 +8,8 @@ tokens_proximity(
   x,
   keywords,
   get_min = TRUE,
-  valuetype = c("glob", "regex", "fixed")
+  valuetype = c("glob", "regex", "fixed"),
+  count_from = 1
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ tokens_proximity(
 \item{get_min}{logical, whether to return only the minimum distance or raw distance information; it is more relevant when \code{keywords} have more than one word. See details.}
 
 \item{valuetype}{See \link[quanteda:valuetype]{quanteda::valuetype}}
+
+\item{count_from}{numeric, how proximity is counted from when \code{get_min} is \code{TRUE}. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behavior of \code{\link[=dfm.tokens_with_proximity]{dfm.tokens_with_proximity()}}.}
 }
 \value{
 a \code{tokens_with_proximity} object. It is a derivative of \code{\link[quanteda:tokens]{quanteda::tokens()}}, i.e. all \verb{token_*} functions still work. A \code{tokens_with_proximity} has a modified \code{\link[=print]{print()}} method. Also, additional data slots are included
@@ -32,7 +35,7 @@ a \code{tokens_with_proximity} object. It is a derivative of \code{\link[quanted
 This function extracts distance information from a \code{\link[quanteda:tokens]{quanteda::tokens()}} object.
 }
 \details{
-The distance is measured by number of tokens away from the target. Given a tokenized sentence: \link{"I", "eat", "this", "apple"} and suppose "eat" is the target. The vector of minimum distances for each word from "eat" is \link{2, 1, 2, 3}. In another case: \link{"I", "wash", "and", "eat", "this", "apple"} and \link{"wash", "eat"} are the keywords. The minimal distance vector is \link{2, 1, 2, 1, 2, 3}. If \code{get_min} is \code{FALSE}, the output is a list of two vectors. For "wash", the distance vector is \link{1, 0, 1, 2, 3}. For "eat", \link{3, 2, 1, 0, 1, 2}. \code{get_min} always add 1 to the distance.
+Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: \link{"I", "eat", "this", "apple"} and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is \link{2, 1, 2, 3}, if \code{count_from} is 1. In another case: \link{"I", "wash", "and", "eat", "this", "apple"} and \link{"wash", "eat"} are the keywords. The minimal distance vector is \link{2, 1, 2, 1, 2, 3}. If \code{get_min} is \code{FALSE}, the output is a list of two vectors. For "wash", the distance vector is \link{1, 0, 1, 2, 3}. For "eat", \link{3, 2, 1, 0, 1, 2}.
 It is recommended to conduct all text maniputation tasks with all \verb{tokens_*()} functions before calling this function.
 }
 \examples{

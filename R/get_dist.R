@@ -6,22 +6,22 @@
     min(purrr::map_dbl(x, pos))
 }
 
-.get_proximity <- function(tokenized_text, keywords_poss, get_min = TRUE) {
+.get_proximity <- function(tokenized_text, keywords_poss, get_min = TRUE, count_from = 1) {
     target_idx <- which(tokenized_text %in% keywords_poss)
     poss <- seq_along(tokenized_text)
     if (length(target_idx) == 0) {
-        return(rep(length(poss) + 1, length(poss)))
+        return(rep(length(poss) + count_from, length(poss)))
     }
     res <- lapply(target_idx, .cal_dist, poss = poss)
     if (get_min) {
-        return(purrr::map_dbl(poss, .get_min, x = res) + 1)
+        return(purrr::map_dbl(poss, .get_min, x = res) + count_from)
     }
     return(res)
 }
 
-get_proximity <- function(x, keywords, get_min = TRUE) {
+get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
     keywords_poss <- which(attr(x, "types") %in% keywords)
-    purrr::map(x, .get_proximity, keywords_poss = keywords_poss, get_min = get_min)
+    purrr::map(x, .get_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from)
 }
 
 .resolve_keywords <- function(keywords, features, valuetype) {
@@ -44,7 +44,8 @@ get_proximity <- function(x, keywords, get_min = TRUE) {
 #' @param keywords a character vector of anchor words
 #' @param get_min logical, whether to return only the minimum distance or raw distance information; it is more relevant when `keywords` have more than one word. See details.
 #' @param valuetype See [quanteda::valuetype]
-#' @details The distance is measured by number of tokens away from the target. Given a tokenized sentence: ["I", "eat", "this", "apple"] and suppose "eat" is the target. The vector of minimum distances for each word from "eat" is [2, 1, 2, 3]. In another case: ["I", "wash", "and", "eat", "this", "apple"] and ["wash", "eat"] are the keywords. The minimal distance vector is [2, 1, 2, 1, 2, 3]. If `get_min` is `FALSE`, the output is a list of two vectors. For "wash", the distance vector is [1, 0, 1, 2, 3]. For "eat", [3, 2, 1, 0, 1, 2]. `get_min` always add 1 to the distance.
+#' @param count_from numeric, how proximity is counted from when `get_min` is `TRUE`. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behavior of [dfm.tokens_with_proximity()].
+#' @details Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: ["I", "eat", "this", "apple"] and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is [2, 1, 2, 3], if `count_from` is 1. In another case: ["I", "wash", "and", "eat", "this", "apple"] and ["wash", "eat"] are the keywords. The minimal distance vector is [2, 1, 2, 1, 2, 3]. If `get_min` is `FALSE`, the output is a list of two vectors. For "wash", the distance vector is [1, 0, 1, 2, 3]. For "eat", [3, 2, 1, 0, 1, 2].
 #' It is recommended to conduct all text maniputation tasks with all `tokens_*()` functions before calling this function.
 #' @return a `tokens_with_proximity` object. It is a derivative of [quanteda::tokens()], i.e. all `token_*` functions still work. A `tokens_with_proximity` has a modified [print()] method. Also, additional data slots are included
 #' * a document variation `dist`
@@ -62,14 +63,14 @@ get_proximity <- function(x, keywords, get_min = TRUE) {
 #' ukimg_eu %>% tokens_proximity("britain")
 #' @seealso [dfm.tokens_with_proximity()] [quanteda::tokens()]
 #' @export
-tokens_proximity <- function(x, keywords, get_min = TRUE, valuetype = c("glob", "regex", "fixed")) {
+tokens_proximity <- function(x, keywords, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), count_from = 1) {
     if (!inherits(x, "tokens")) {
         stop("x is not a `tokens` object.", call. = FALSE)
     }
     valuetype <- match.arg(valuetype)
     keywords <- .resolve_keywords(keywords, attr(x, "types"), valuetype)
     toks <- x
-    proximity <- get_proximity(x = toks, keywords = keywords, get_min = get_min)
+    proximity <- get_proximity(x = toks, keywords = keywords, get_min = get_min, count_from = count_from)
     quanteda::docvars(toks)$proximity <- I(proximity)
     quanteda::meta(toks, field = "keywords") <- keywords
     quanteda::meta(toks, field = "get_min") <- get_min
