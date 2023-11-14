@@ -39,9 +39,9 @@ c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza c
 "EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros.")
 ```
 
-`tokens_dist()` generates the proximity vectors and stores them as a `docvar` (document variable).
+`tokens_proximity()` generates the proximity vectors and stores them as a `docvar` (document variable).
 
-```{r tokens_dist}
+```{r tokens_proximity}
 res <- testdata %>% tokens() %>% tokens_tolower() %>%
     tokens_proximity(keywords = "turkish")
 res
