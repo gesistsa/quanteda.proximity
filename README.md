@@ -1,40 +1,40 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# quanteda.dist
+# quanteda.proximity
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
-The goal of quanteda.dist is to add a hacky layer of distance vectors
-into the `tokens` object of `quanteda`.
+The goal of quanteda.proximity is to add a hacky layer of proximityp
+vectors into the `tokens` object of `quanteda`.
 
 ## Installation
 
-You can install the development version of quanteda.dist like so:
+You can install the development version of quanteda.proximity like so:
 
 ``` r
-remotes::install_github("gesistsa/quanteda.dist")
+remotes::install_github("gesistsa/quanteda.proximity")
 ```
 
 ## Example
 
 ``` r
 suppressPackageStartupMessages(library(quanteda))
-library(quanteda.dist)
+library(quanteda.proximity)
 
 testdata <-
 c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza conflict, said on Wednesday the Palestinian militant group Hamas was not a terrorist organisation but a liberation group fighting to protect Palestinian lands.",
 "EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros.")
 ```
 
-`tokens_dist()` generates the distance vectors and stores them as a
+`tokens_dist()` generates the proximity vectors and stores them as a
 `docvar` (document variable).
 
 ``` r
 res <- testdata %>% tokens() %>% tokens_tolower() %>%
-    tokens_dist(targets = "turkish")
+    tokens_proximity(keywords = "turkish")
 res
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
@@ -49,13 +49,13 @@ res
 #> [ ... and 31 more ]
 #> 
 #> With distance vector(s).
-#> targets:  turkish
+#> keywords:  turkish
 ```
 
-You can access the distance vectors by
+You can access the proximity vectors by
 
 ``` r
-docvars(res, "dist")
+docvars(res, "proximity")
 #> $text1
 #>  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 #> [26] 26 27 28 29 30 31 32 33 34 35 36 37 38
@@ -65,9 +65,9 @@ docvars(res, "dist")
 #> [26] 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44
 ```
 
-The `tokens` object with distance vectors can be converted to a
+The `tokens` object with proximity vectors can be converted to a
 (weighted) `dfm` (Document-Feature Matrix). The default weight is
-assigned by inverting the distance.
+assigned by inverting the proximity.
 
 ``` r
 dfm(res)
@@ -114,7 +114,7 @@ dfm(res, weight_function = function(x) { 1 / x^2 })
 
 ## Application
 
-A clumsy example to calculate the total inverse distance weighted
+A clumsy example to calculate the total inverse proximity weighted
 frequency of "terror\*" words.
 
 ``` r
@@ -128,7 +128,7 @@ dfm(res) %>% dfm_lookup(terror_dict) %>% rowSums()
 How about changing the target to “Hamas”?
 
 ``` r
-res2 <- res %>% tokens_dist(targets = "hamas")
+res2 <- res %>% tokens_proximity(keywords = "hamas")
 res2
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
@@ -143,7 +143,7 @@ res2
 #> [ ... and 31 more ]
 #> 
 #> With distance vector(s).
-#> targets:  hamas
+#> keywords:  hamas
 ```
 
 ``` r
@@ -155,7 +155,7 @@ dfm(res2) %>% dfm_lookup(terror_dict) %>% rowSums()
 Can we use two targets, e.g. “EU” and “Brussels”?
 
 ``` r
-res3 <- res %>% tokens_dist(targets = c("eu", "brussels"))
+res3 <- res %>% tokens_proximity(keywords = c("eu", "brussels"))
 res3
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
@@ -170,11 +170,11 @@ res3
 #> [ ... and 31 more ]
 #> 
 #> With distance vector(s).
-#> targets:  eu brussels
+#> keywords:  eu brussels
 ```
 
 ``` r
-docvars(res3, "dist")
+docvars(res3, "proximity")
 #> $text1
 #>  [1] 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39
 #> [26] 39 39 39 39 39 39 39 39 39 39 39 39 39
