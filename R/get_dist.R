@@ -29,7 +29,7 @@ get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
         return(keywords)
     }
     if (valuetype == "glob") {
-        regex <- paste(glob2rx(keywords), collapse = "|")
+        regex <- paste(utils::glob2rx(keywords), collapse = "|")
     }
     if (valuetype == "regex") {
         regex <- paste(keywords, collapse = "|")
@@ -45,7 +45,7 @@ get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
 #' @param get_min logical, whether to return only the minimum distance or raw distance information; it is more relevant when `keywords` have more than one word. See details.
 #' @param valuetype See [quanteda::valuetype]
 #' @param count_from numeric, how proximity is counted from when `get_min` is `TRUE`. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behavior of [dfm.tokens_with_proximity()].
-#' @details Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: ["I", "eat", "this", "apple"] and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is [2, 1, 2, 3], if `count_from` is 1. In another case: ["I", "wash", "and", "eat", "this", "apple"] and ["wash", "eat"] are the keywords. The minimal distance vector is [2, 1, 2, 1, 2, 3]. If `get_min` is `FALSE`, the output is a list of two vectors. For "wash", the distance vector is [1, 0, 1, 2, 3]. For "eat", [3, 2, 1, 0, 1, 2].
+#' @details Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: \["I", "eat", "this", "apple"\] and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is \[2, 1, 2, 3\], if `count_from` is 1. In another case: \["I", "wash", "and", "eat", "this", "apple"\] and \["wash", "eat"\] are the keywords. The minimal distance vector is \[2, 1, 2, 1, 2, 3\]. If `get_min` is `FALSE`, the output is a list of two vectors. For "wash", the distance vector is \[1, 0, 1, 2, 3\]. For "eat", \[3, 2, 1, 0, 1, 2\].
 #' It is recommended to conduct all text maniputation tasks with all `tokens_*()` functions before calling this function.
 #' @return a `tokens_with_proximity` object. It is a derivative of [quanteda::tokens()], i.e. all `token_*` functions still work. A `tokens_with_proximity` has a modified [print()] method. Also, additional data slots are included
 #' * a document variation `dist`
@@ -97,7 +97,7 @@ print.tokens_with_proximity <- function(x, ...) {
 #' @method convert tokens_with_proximity
 #' @export
 #' @importFrom quanteda convert
-convert.tokens_with_proximity <- function(x, to = c("data.frame")) {
+convert.tokens_with_proximity <- function(x, to = c("data.frame"), ...) {
     to <- match.arg(to)
     purrr::list_rbind(
                purrr::pmap(list(tokens_obj = as.list(x),
@@ -111,10 +111,14 @@ convert.tokens_with_proximity <- function(x, to = c("data.frame")) {
 #'
 #' Construct a sparse document-feature matrix from the output of [tokens_proximity()].
 #' @param x output of [tokens_proximity()]
+#' @param tolower ignored
+#' @param remove_padding ignored
 #' @param remove_docvars_proximity boolean, remove the "proximity" document variable
+#' @param verbose ignored
 #' @param weight_function a weight function, default to invert distance
+#' @param ... not used.
 #' @importFrom quanteda dfm
-#' @details By default, words closer to keywords are weighted higher. You might change that with another `weight_function`.
+#' @details By default, words closer to keywords are weighted higher. You might change that with another `weight_function`. Please also note that `tolower` and `remove_padding` have no effect. It is because changing tokens at this point would need to recalculate the proximity vectors. Please do all the text manipulation before running [tokens_proximity()].
 #' @examples
 #' library(quanteda)
 #' ukimg_eu <- data_char_ukimmig2010 %>% tokens(remove_punct = TRUE) %>%
@@ -126,14 +130,15 @@ convert.tokens_with_proximity <- function(x, to = c("data.frame")) {
 #' dfm_select(c("immig*", "migr*")) %>% rowSums() %>% sort()
 #' @method dfm tokens_with_proximity
 #' @export
-dfm.tokens_with_proximity <- function(x, remove_docvars_proximity = TRUE,
-                                 weight_function = function(x) {1 / x}, ...) {
+dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
+                                      verbose = quanteda::quanteda_options("verbose"), remove_docvars_proximity = TRUE,
+                                      weight_function = function(x) {1 / x}, ...) {
     vec <- c() ## value (x) in the sparseMatrix
     i_pos <- c()
     j_pos <- c()
     feat_name <- attr(x, "types")
     x_attrs <- attributes(x)
-    x_docvars <- docvars(x)
+    x_docvars <- quanteda::docvars(x)
     for (i in seq_along(x)) {
         cur_dist <- quanteda::docvars(x, "proximity")[[i]]
         cur_feat <- match(x[[i]], feat_name)
@@ -156,6 +161,6 @@ dfm.tokens_with_proximity <- function(x, remove_docvars_proximity = TRUE,
     if (remove_docvars_proximity) {
         x_docvars$proximity <- NULL
     }
-    docvars(output) <- x_docvars
+    quanteda::docvars(output) <- x_docvars
     return(output)
 }

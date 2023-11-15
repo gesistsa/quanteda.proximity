@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(quanteda.dist)
+library(quanteda.proximity)
 
-test_check("quanteda.dist")
+test_check("quanteda.proximity")
