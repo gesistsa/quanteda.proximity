@@ -35,7 +35,7 @@ a \code{tokens_with_proximity} object. It is a derivative of \code{\link[quanted
 This function extracts distance information from a \code{\link[quanteda:tokens]{quanteda::tokens()}} object.
 }
 \details{
-Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: \link{"I", "eat", "this", "apple"} and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is \link{2, 1, 2, 3}, if \code{count_from} is 1. In another case: \link{"I", "wash", "and", "eat", "this", "apple"} and \link{"wash", "eat"} are the keywords. The minimal distance vector is \link{2, 1, 2, 1, 2, 3}. If \code{get_min} is \code{FALSE}, the output is a list of two vectors. For "wash", the distance vector is \link{1, 0, 1, 2, 3}. For "eat", \link{3, 2, 1, 0, 1, 2}.
+Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: ["I", "eat", "this", "apple"] and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is [2, 1, 2, 3], if \code{count_from} is 1. In another case: ["I", "wash", "and", "eat", "this", "apple"] and ["wash", "eat"] are the keywords. The minimal distance vector is [2, 1, 2, 1, 2, 3]. If \code{get_min} is \code{FALSE}, the output is a list of two vectors. For "wash", the distance vector is [1, 0, 1, 2, 3]. For "eat", [3, 2, 1, 0, 1, 2].
 It is recommended to conduct all text maniputation tasks with all \verb{tokens_*()} functions before calling this function.
 }
 \examples{

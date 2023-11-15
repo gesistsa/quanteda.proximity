@@ -17,5 +17,6 @@ Config/testthat/edition: 3
 Imports: 
     purrr,
     quanteda,
-    Matrix
+    Matrix,
+    utils
 VignetteBuilder: knitr
