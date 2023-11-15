@@ -78,6 +78,12 @@ tokens_proximity <- function(x, keywords, get_min = TRUE, valuetype = c("glob", 
     return(toks)
 }
 
+.convert_df <- function(tokens_obj, proximity_obj, doc_id) {
+    data.frame("doc_id" = rep(doc_id, length(tokens_obj)),
+               "token" = tokens_obj,
+               "proximity" = proximity_obj)
+}
+
 #' @method print tokens_with_proximity
 #' @export
 print.tokens_with_proximity <- function(x, ...) {
@@ -88,6 +94,18 @@ print.tokens_with_proximity <- function(x, ...) {
     cat("keywords: ", quanteda::meta(x, field = "keywords"), "\n")
 }
 
+#' @method convert tokens_with_proximity
+#' @export
+#' @importFrom quanteda convert
+convert.tokens_with_proximity <- function(x, to = c("data.frame")) {
+    to <- match.arg(to)
+    purrr::list_rbind(
+               purrr::pmap(list(tokens_obj = as.list(x),
+                                       proximity_obj = quanteda::docvars(x, "proximity"),
+                                       doc_id = quanteda::docnames(x)),
+                           .convert_df)
+           )
+}
 
 #' Create a document-feature matrix
 #'
