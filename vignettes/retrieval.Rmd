@@ -19,7 +19,7 @@ suppressPackageStartupMessages(library(quanteda))
 library(quanteda.proximity)
 ```
 
-This is an example of using `quanteda.proximity` to solve an information retrieval problem. See [this question](https://stackoverflow.com/questions/44057639/how-to-calculate-proximity-of-words-to-a-specific-term-in-a-document) on Stack Overflow.
+This is a simple example of using `quanteda.proximity` to solve an information retrieval problem. See [this question](https://stackoverflow.com/questions/44057639/how-to-calculate-proximity-of-words-to-a-specific-term-in-a-document) on Stack Overflow. The puzzle is to extract words that are within a 15-word window of "fire" and their proximity values with "fire".
 
 ```{r data}
 song <- "Far over the misty mountains cold To dungeons deep and caverns old We 
@@ -45,13 +45,10 @@ To win our harps and gold from him!"
 ```
 
 ```{r processing}
-toks <- tokens(song,  remove_punct = TRUE, remove_numbers = TRUE, remove_symbols = TRUE, split_hyphens = TRUE) %>% tokens_tolower() %>% tokens_select("fire", window = 15, padding = TRUE)
-toks %>% tokens_proximity("fire") %>% docvars("proximity") -> proximity
-
-context_words <- data.frame(token = toks[[1]][proximity[[1]] <= 16], proximity = proximity[[1]][proximity[[1]] <= 16])
-
-aggregate(proximity ~ token, data = context_words, FUN = mean)
+toks <- tokens(song,  remove_punct = TRUE, remove_numbers = TRUE, remove_symbols = TRUE, split_hyphens = TRUE) %>% tokens_tolower() %>% tokens_proximity("fire", count_from = 0)
 ```
 
-
-
+```{r df}
+toks_df <- convert(toks)
+toks_df[toks_df$proximity <= 15 & toks_df$proximity > 0,]
+```
