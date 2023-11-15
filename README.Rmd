@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # quanteda.proximity
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/gesistsa/quanteda.proximity/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gesistsa/quanteda.proximity/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of quanteda.proximity is to add a hacky layer of proximityp vectors into the `tokens` object of `quanteda`.
