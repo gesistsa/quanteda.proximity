@@ -89,7 +89,7 @@
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: "I", "eat", "this", "apple" and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is 2, 1, 2, 3, if <code>count_from</code> is 1. In another case: "I", "wash", "and", "eat", "this", "apple" and "wash", "eat" are the keywords. The minimal distance vector is 2, 1, 2, 1, 2, 3. If <code>get_min</code> is <code>FALSE</code>, the output is a list of two vectors. For "wash", the distance vector is 1, 0, 1, 2, 3. For "eat", 3, 2, 1, 0, 1, 2.
+    <p>Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: ["I", "eat", "this", "apple"] and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is [2, 1, 2, 3], if <code>count_from</code> is 1. In another case: ["I", "wash", "and", "eat", "this", "apple"] and ["wash", "eat"] are the keywords. The minimal distance vector is [2, 1, 2, 1, 2, 3]. If <code>get_min</code> is <code>FALSE</code>, the output is a list of two vectors. For "wash", the distance vector is [1, 0, 1, 2, 3]. For "eat", [3, 2, 1, 0, 1, 2].
 It is recommended to conduct all text maniputation tasks with all <code>tokens_*()</code> functions before calling this function.</p>
     </div>
     <div class="section level2">

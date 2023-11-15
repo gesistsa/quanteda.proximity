@@ -51,6 +51,9 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for tokens_with_proximity</span></span>
 <span><span class="fu"><a href="https://quanteda.io/reference/dfm.html" class="external-link">dfm</a></span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
+<span>  tolower <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  remove_padding <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="fu">quanteda</span><span class="fu">::</span><span class="fu"><a href="https://quanteda.io/reference/quanteda_options.html" class="external-link">quanteda_options</a></span><span class="op">(</span><span class="st">"verbose"</span><span class="op">)</span>,</span>
 <span>  remove_docvars_proximity <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  weight_function <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>     <span class="fl">1</span><span class="op">/</span><span class="va">x</span></span>
@@ -65,6 +68,18 @@
 <dd><p>output of <code><a href="tokens_proximity.html">tokens_proximity()</a></code></p></dd>
 
 
+<dt>tolower</dt>
+<dd><p>ignored</p></dd>
+
+
+<dt>remove_padding</dt>
+<dd><p>ignored</p></dd>
+
+
+<dt>verbose</dt>
+<dd><p>ignored</p></dd>
+
+
 <dt>remove_docvars_proximity</dt>
 <dd><p>boolean, remove the "proximity" document variable</p></dd>
 
@@ -72,10 +87,14 @@
 <dt>weight_function</dt>
 <dd><p>a weight function, default to invert distance</p></dd>
 
+
+<dt>...</dt>
+<dd><p>not used.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>By default, words closer to keywords are weighted higher. You might change that with another <code>weight_function</code>.</p>
+    <p>By default, words closer to keywords are weighted higher. You might change that with another <code>weight_function</code>. Please also note that <code>tolower</code> and <code>remove_padding</code> have no effect. It is because changing tokens at this point would need to recalculate the proximity vectors. Please do all the text manipulation before running <code><a href="tokens_proximity.html">tokens_proximity()</a></code>.</p>
     </div>
 
     <div class="section level2">
@@ -84,7 +103,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Package version: 3.3.1</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Unicode version: 14.0</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ICU version: 70.1</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel computing: 4 of 4 threads used.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parallel computing: 2 of 2 threads used.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> See https://quanteda.io for tutorials and examples.</span>
 <span class="r-in"><span><span class="va">ukimg_eu</span> <span class="op">&lt;-</span> <span class="va">data_char_ukimmig2010</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://quanteda.io/reference/tokens.html" class="external-link">tokens</a></span><span class="op">(</span>remove_punct <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://quanteda.io/reference/tokens_tolower.html" class="external-link">tokens_tolower</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="tokens_proximity.html">tokens_proximity</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"eu"</span>, <span class="st">"europe"</span>, <span class="st">"european"</span><span class="op">)</span><span class="op">)</span></span></span>
