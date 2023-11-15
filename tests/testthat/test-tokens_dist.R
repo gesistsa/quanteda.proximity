@@ -2,6 +2,10 @@ test_that("defensive", {
     expect_error(tokens_proximity("a", "a"), "x is not a")
 })
 
+test_that("edge cases", {
+    expect_error("" %>% tokens() %>% tokens_proximity("") %>% convert(), NA)
+})
+
 test_that(".resolve_keywords", {
     expect_equal(.resolve_keywords(c("abc", "def"), c("abcd", "defa"), valuetype = "fixed"), c("abc", "def"))
     expect_equal(.resolve_keywords(c("abc*", "def*"), c("abcd", "defa"), valuetype = "glob"), c("abcd", "defa"))
@@ -17,4 +21,10 @@ test_that("count_from", {
     ## crazy sh*t
     "this is my life" %>% tokens() %>% tokens_proximity("my", count_from = -1) %>% docvars("proximity") -> res
     expect_equal(res$text1, c(1, 0, -1, 0))
+})
+
+test_that("convert", {
+    suppressPackageStartupMessages(library(quanteda))
+    "this is my life" %>% tokens() %>% tokens_proximity("my") %>% convert() -> res
+    expect_true(is.data.frame(res))
 })
