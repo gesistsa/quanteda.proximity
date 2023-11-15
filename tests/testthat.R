@@ -9,4 +9,4 @@
 library(testthat)
 library(quanteda.proximity)
 
-test_check("quanteda.proxmity")
+test_check("quanteda.proximity")
