@@ -196,3 +196,29 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
     quanteda::docvars(output) <- x_docvars
     return(output)
 }
+
+dfm2 <- function(x, remove_docvars_proximity = TRUE,
+                                      weight_function = function(x) {
+                                          1 / x
+                                      }) {
+    x_attrs <- attributes(x)
+    x_docvars <- quanteda::docvars(x)
+    type <- types(x)
+    attrs <- attributes(x)
+    temp <- unclass(x)
+    index <- unlist(temp, use.names = FALSE)
+    val <- weight_function(unlist(docvars(x, "proximity"), use.names = FALSE))
+    temp <- Matrix::sparseMatrix(j = index,
+                                 p = cumsum(c(1L, lengths(x))) - 1L,
+                                 x = val,
+                                 dims = c(length(x),
+                                          length(type)),
+                                 dimnames = list(quanteda::docnames(x), type))
+    output <- quanteda::as.dfm(temp)
+    attributes(output)[["meta"]] <- x_attrs[["meta"]]
+    if (remove_docvars_proximity) {
+        x_docvars$proximity <- NULL
+    }
+    quanteda::docvars(output) <- x_docvars
+    return(output)
+}
