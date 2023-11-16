@@ -166,7 +166,6 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
     x_attrs <- attributes(x)
     x_docvars <- quanteda::docvars(x)
     type <- types(x)
-    attrs <- attributes(x)
     temp <- unclass(x)
     index <- unlist(temp, use.names = FALSE)
     val <- weight_function(unlist(docvars(x, "proximity"), use.names = FALSE))
