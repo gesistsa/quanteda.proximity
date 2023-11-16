@@ -99,7 +99,7 @@ print.tokens_with_proximity <- function(x, ...) {
     y <- x
     class(y) <- "tokens"
     print(y, ...)
-    cat("With distance vector(s).\n")
+    cat("With proximity vector(s).\n")
     cat("keywords: ", quanteda::meta(x, field = "keywords"), "\n")
 }
 

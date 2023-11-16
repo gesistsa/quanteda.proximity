@@ -49,7 +49,7 @@ res
 #> [11] "financial"    "firms"       
 #> [ ... and 31 more ]
 #> 
-#> With distance vector(s).
+#> With proximity vector(s).
 #> keywords:  turkish
 ```
 
@@ -143,7 +143,7 @@ res2
 #> [11] "financial"    "firms"       
 #> [ ... and 31 more ]
 #> 
-#> With distance vector(s).
+#> With proximity vector(s).
 #> keywords:  hamas
 ```
 
@@ -170,7 +170,7 @@ res3
 #> [11] "financial"    "firms"       
 #> [ ... and 31 more ]
 #> 
-#> With distance vector(s).
+#> With proximity vector(s).
 #> keywords:  eu brussels
 ```
 
