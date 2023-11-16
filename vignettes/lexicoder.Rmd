@@ -1,0 +1,65 @@
+---
+title: "Proximity-weighted text analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{proximity-weighted text analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+suppressPackageStartupMessages(library(quanteda))
+library(quanteda.proximity)
+```
+
+`data_corpus_inaugural` is a built-in dataset of `quanteda`. This is the usual way to conduct a dictionary-based analysis using the Lexicoder dictionary (also built-in). The "Net Tone" measure is calculated (Young & Soroka, 2012).
+
+```{r inaugural}
+data_corpus_inaugural %>% tokens %>% tokens_tolower %>% tokens_compound(data_dictionary_LSD2015, concatenator = " ") -> toks
+
+toks %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
+        convert("data.frame") -> lexicoder_count
+data_corpus_inaugural %>% tokens %>% tokens_tolower %>% tokens_compound(data_dictionary_LSD2015, concatenator = " ") %>%
+    ntoken() -> token_count
+
+lexicoder_count$total_count <- token_count
+
+lexicoder_count$nettone <- ((lexicoder_count$positive + lexicoder_count$neg_negative) / lexicoder_count$total_count) -
+    ((lexicoder_count$negative + lexicoder_count$neg_positive) / lexicoder_count$total_count)
+lexicoder_count[order(lexicoder_count$nettone, decreasing = TRUE),c("doc_id", "nettone")]
+```
+
+The Net Tone measures the overall tone of the entire article. That might not be very interesting, because we don't know what words exactly are associated with the so-called positive and negative tones.
+
+## Alternative I - Window
+
+An alternative is to consider words that are within a certain window of some keywords you are interested in. It can be done purely with `quanteda`. Suppose you are interested in all "ameri*" keywords and a window of 20.
+
+```{r window}
+toks %>% tokens_select(c("ameri*"), window = 20) %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
+        convert("data.frame") -> window_count
+window_count$total_count <- token_count
+window_count$nettone <- ((window_count$positive + window_count$neg_negative) / window_count$total_count) -
+    ((window_count$negative + window_count$neg_positive) / window_count$total_count)
+window_count[order(window_count$nettone, decreasing = TRUE),c("doc_id", "nettone")]
+```
+
+## Alternative II - Proximity
+
+We can weight the frequency by the proximity to "ameri*" keywords.
+
+```{r}
+toks %>% tokens_proximity(c("ameri*")) %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
+        convert("data.frame") -> america_count
+america_count$total_count <- token_count
+america_count$nettone <- ((america_count$positive + america_count$neg_negative) / america_count$total_count) -
+    ((america_count$negative + america_count$neg_positive) / america_count$total_count)
+america_count[order(america_count$nettone, decreasing = TRUE),c("doc_id", "nettone")]
+```
