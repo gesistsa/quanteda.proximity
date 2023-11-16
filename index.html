@@ -100,7 +100,7 @@
 <span><span class="co">#&gt; [11] "financial"    "firms"       </span></span>
 <span><span class="co">#&gt; [ ... and 31 more ]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; With distance vector(s).</span></span>
+<span><span class="co">#&gt; With proximity vector(s).</span></span>
 <span><span class="co">#&gt; keywords:  turkish</span></span></code></pre></div>
 <p>You can access the proximity vectors by</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -174,7 +174,7 @@
 <span><span class="co">#&gt; [11] "financial"    "firms"       </span></span>
 <span><span class="co">#&gt; [ ... and 31 more ]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; With distance vector(s).</span></span>
+<span><span class="co">#&gt; With proximity vector(s).</span></span>
 <span><span class="co">#&gt; keywords:  hamas</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://quanteda.io/reference/dfm.html" class="external-link">dfm</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://quanteda.io/reference/dfm_lookup.html" class="external-link">dfm_lookup</a></span><span class="op">(</span><span class="va">terror_dict</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -196,7 +196,7 @@
 <span><span class="co">#&gt; [11] "financial"    "firms"       </span></span>
 <span><span class="co">#&gt; [ ... and 31 more ]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; With distance vector(s).</span></span>
+<span><span class="co">#&gt; With proximity vector(s).</span></span>
 <span><span class="co">#&gt; keywords:  eu brussels</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://quanteda.io/reference/docvars.html" class="external-link">docvars</a></span><span class="op">(</span><span class="va">res3</span>, <span class="st">"proximity"</span><span class="op">)</span></span>
