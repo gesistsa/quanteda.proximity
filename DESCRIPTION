@@ -21,5 +21,8 @@ Imports:
     purrr,
     quanteda,
     Matrix,
-    utils
+    utils,
+    Rcpp
 VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp
