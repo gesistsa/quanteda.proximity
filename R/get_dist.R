@@ -10,7 +10,7 @@
     }
     res <- sapply(target_idx, .cal_dist, poss = poss)
     if (get_min) {
-        return(apply(res, 1, min) + count_from)
+        return(do.call(pmin, as.data.frame(res)) + count_from)
     }
     return(res)
 }
