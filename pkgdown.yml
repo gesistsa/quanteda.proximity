@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   lexicoder: lexicoder.html
   retrieval: retrieval.html
-last_built: 2023-11-16T11:10Z
+last_built: 2023-11-16T12:04Z
 urls:
   reference: https://gesistsa.github.io/quanteda.proxmity/reference
   article: https://gesistsa.github.io/quanteda.proxmity/articles
