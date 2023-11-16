@@ -2,19 +2,15 @@
     return(abs(y - poss))
 }
 
-.get_min <- function(pos, x) {
-    min(purrr::map_dbl(x, pos))
-}
-
 .get_proximity <- function(tokenized_text, keywords_poss, get_min = TRUE, count_from = 1) {
     target_idx <- which(tokenized_text %in% keywords_poss)
     poss <- seq_along(tokenized_text)
     if (length(target_idx) == 0) {
         return(rep(length(poss) + count_from, length(poss)))
     }
-    res <- lapply(target_idx, .cal_dist, poss = poss)
+    res <- sapply(target_idx, .cal_dist, poss = poss)
     if (get_min) {
-        return(purrr::map_dbl(poss, .get_min, x = res) + count_from)
+        return(apply(res, 1, min) + count_from)
     }
     return(res)
 }
@@ -53,12 +49,23 @@ get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
 #' * a metadata slot `get_min`
 #' @examples
 #' library(quanteda)
-#' ukimg_eu <- data_char_ukimmig2010 %>% tokens(remove_punct = TRUE) %>%
-#' tokens_tolower() %>% tokens_proximity(c("eu", "euro*"))
-#' ukimg_eu %>% dfm() %>% dfm_select(c("immig*", "migr*")) %>% rowSums() %>% sort()
+#' ukimg_eu <- data_char_ukimmig2010 %>%
+#'     tokens(remove_punct = TRUE) %>%
+#'     tokens_tolower() %>%
+#'     tokens_proximity(c("eu", "euro*"))
+#' ukimg_eu %>%
+#'     dfm() %>%
+#'     dfm_select(c("immig*", "migr*")) %>%
+#'     rowSums() %>%
+#'     sort()
 #' ## compare with
-#' data_char_ukimmig2010 %>% tokens(remove_punct = TRUE) %>% tokens_tolower() %>%
-#' dfm %>% dfm_select(c("immig*", "migr*")) %>% rowSums() %>% sort()
+#' data_char_ukimmig2010 %>%
+#'     tokens(remove_punct = TRUE) %>%
+#'     tokens_tolower() %>%
+#'     dfm() %>%
+#'     dfm_select(c("immig*", "migr*")) %>%
+#'     rowSums() %>%
+#'     sort()
 #' ## rerun to select other keywords
 #' ukimg_eu %>% tokens_proximity("britain")
 #' @seealso [dfm.tokens_with_proximity()] [quanteda::tokens()]
@@ -79,9 +86,11 @@ tokens_proximity <- function(x, keywords, get_min = TRUE, valuetype = c("glob", 
 }
 
 .convert_df <- function(tokens_obj, proximity_obj, doc_id) {
-    data.frame("doc_id" = rep(doc_id, length(tokens_obj)),
-               "token" = tokens_obj,
-               "proximity" = proximity_obj)
+    data.frame(
+        "doc_id" = rep(doc_id, length(tokens_obj)),
+        "token" = tokens_obj,
+        "proximity" = proximity_obj
+    )
 }
 
 #' @method print tokens_with_proximity
@@ -100,11 +109,15 @@ print.tokens_with_proximity <- function(x, ...) {
 convert.tokens_with_proximity <- function(x, to = c("data.frame"), ...) {
     to <- match.arg(to)
     purrr::list_rbind(
-               purrr::pmap(list(tokens_obj = as.list(x),
-                                       proximity_obj = quanteda::docvars(x, "proximity"),
-                                       doc_id = quanteda::docnames(x)),
-                           .convert_df)
-           )
+        purrr::pmap(
+            list(
+                tokens_obj = as.list(x),
+                proximity_obj = quanteda::docvars(x, "proximity"),
+                doc_id = quanteda::docnames(x)
+            ),
+            .convert_df
+        )
+    )
 }
 
 #' Create a document-feature matrix
@@ -121,18 +134,35 @@ convert.tokens_with_proximity <- function(x, to = c("data.frame"), ...) {
 #' @details By default, words closer to keywords are weighted higher. You might change that with another `weight_function`. Please also note that `tolower` and `remove_padding` have no effect. It is because changing tokens at this point would need to recalculate the proximity vectors. Please do all the text manipulation before running [tokens_proximity()].
 #' @examples
 #' library(quanteda)
-#' ukimg_eu <- data_char_ukimmig2010 %>% tokens(remove_punct = TRUE) %>%
-#' tokens_tolower() %>% tokens_proximity(c("eu", "europe", "european"))
-#' ukimg_eu %>% dfm() %>% dfm_select(c("immig*", "migr*")) %>% rowSums() %>% sort()
+#' ukimg_eu <- data_char_ukimmig2010 %>%
+#'     tokens(remove_punct = TRUE) %>%
+#'     tokens_tolower() %>%
+#'     tokens_proximity(c("eu", "europe", "european"))
+#' ukimg_eu %>%
+#'     dfm() %>%
+#'     dfm_select(c("immig*", "migr*")) %>%
+#'     rowSums() %>%
+#'     sort()
 #' ## Words further away from keywords are weighted higher
-#' ukimg_eu %>% dfm(weight_function = identity) %>% dfm_select(c("immig*", "migr*")) %>% rowSums() %>% sort()
-#' ukimg_eu %>% dfm(weight_function = function(x) {1 / x^2}) %>%
-#' dfm_select(c("immig*", "migr*")) %>% rowSums() %>% sort()
+#' ukimg_eu %>%
+#'     dfm(weight_function = identity) %>%
+#'     dfm_select(c("immig*", "migr*")) %>%
+#'     rowSums() %>%
+#'     sort()
+#' ukimg_eu %>%
+#'     dfm(weight_function = function(x) {
+#'         1 / x^2
+#'     }) %>%
+#'     dfm_select(c("immig*", "migr*")) %>%
+#'     rowSums() %>%
+#'     sort()
 #' @method dfm tokens_with_proximity
 #' @export
 dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
                                       verbose = quanteda::quanteda_options("verbose"), remove_docvars_proximity = TRUE,
-                                      weight_function = function(x) {1 / x}, ...) {
+                                      weight_function = function(x) {
+                                          1 / x
+                                      }, ...) {
     vec <- c() ## value (x) in the sparseMatrix
     i_pos <- c()
     j_pos <- c()
@@ -144,7 +174,7 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
         cur_feat <- match(x[[i]], feat_name)
         unique_feat <- unique(cur_feat)
         total_vec <- rep(0, length(unique_feat))
-        for(j in seq_along(unique_feat)) {
+        for (j in seq_along(unique_feat)) {
             cur_feat_j <- unique_feat[j]
             cur_vec <- cur_dist[cur_feat == cur_feat_j]
             cur_vec <- weight_function(cur_vec)
@@ -154,9 +184,11 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
         i_pos <- c(i_pos, rep(i, length(total_vec)))
         j_pos <- c(j_pos, unique_feat)
     }
-    output <- quanteda::as.dfm(Matrix::sparseMatrix(i = i_pos, j = j_pos,
-                                                    x = vec,
-                                                    dimnames = list(quanteda::docnames(x), feat_name)))
+    output <- quanteda::as.dfm(Matrix::sparseMatrix(
+        i = i_pos, j = j_pos,
+        x = vec,
+        dimnames = list(quanteda::docnames(x), feat_name)
+    ))
     attributes(output)[["meta"]] <- x_attrs[["meta"]]
     if (remove_docvars_proximity) {
         x_docvars$proximity <- NULL
