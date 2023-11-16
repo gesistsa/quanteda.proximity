@@ -163,44 +163,6 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
                                       weight_function = function(x) {
                                           1 / x
                                       }, ...) {
-    vec <- c() ## value (x) in the sparseMatrix
-    i_pos <- c()
-    j_pos <- c()
-    feat_name <- attr(x, "types")
-    x_attrs <- attributes(x)
-    x_docvars <- quanteda::docvars(x)
-    for (i in seq_along(x)) {
-        cur_dist <- quanteda::docvars(x, "proximity")[[i]]
-        cur_feat <- match(x[[i]], feat_name)
-        unique_feat <- unique(cur_feat)
-        total_vec <- rep(0, length(unique_feat))
-        for (j in seq_along(unique_feat)) {
-            cur_feat_j <- unique_feat[j]
-            cur_vec <- cur_dist[cur_feat == cur_feat_j]
-            cur_vec <- weight_function(cur_vec)
-            total_vec[j] <- sum(cur_vec)
-        }
-        vec <- c(vec, total_vec)
-        i_pos <- c(i_pos, rep(i, length(total_vec)))
-        j_pos <- c(j_pos, unique_feat)
-    }
-    output <- quanteda::as.dfm(Matrix::sparseMatrix(
-        i = i_pos, j = j_pos,
-        x = vec,
-        dimnames = list(quanteda::docnames(x), feat_name)
-    ))
-    attributes(output)[["meta"]] <- x_attrs[["meta"]]
-    if (remove_docvars_proximity) {
-        x_docvars$proximity <- NULL
-    }
-    quanteda::docvars(output) <- x_docvars
-    return(output)
-}
-
-dfm2 <- function(x, remove_docvars_proximity = TRUE,
-                                      weight_function = function(x) {
-                                          1 / x
-                                      }) {
     x_attrs <- attributes(x)
     x_docvars <- quanteda::docvars(x)
     type <- types(x)
