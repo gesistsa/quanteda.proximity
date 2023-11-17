@@ -22,18 +22,18 @@ library(quanteda.proximity)
 `data_corpus_inaugural` is a built-in dataset of `quanteda`. This is the usual way to conduct a dictionary-based analysis using the Lexicoder dictionary (also built-in). The "Net Tone" measure is calculated (Young & Soroka, 2012).
 
 ```{r inaugural}
-data_corpus_inaugural %>% tokens %>% tokens_tolower %>% tokens_compound(data_dictionary_LSD2015, concatenator = " ") -> toks
+data_corpus_inaugural %>% tokens %>% tokens_tolower %>% tokens_compound(data_dictionary_LSD2015, concatenator = " ") -> tok1
 
-toks %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
-        convert("data.frame") -> lexicoder_count
+tok1 %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
+        convert("data.frame") -> dat1
 data_corpus_inaugural %>% tokens %>% tokens_tolower %>% tokens_compound(data_dictionary_LSD2015, concatenator = " ") %>%
     ntoken() -> token_count
 
-lexicoder_count$total_count <- token_count
+dat1$total_count <- token_count
 
-lexicoder_count$nettone <- ((lexicoder_count$positive + lexicoder_count$neg_negative) / lexicoder_count$total_count) -
-    ((lexicoder_count$negative + lexicoder_count$neg_positive) / lexicoder_count$total_count)
-lexicoder_count[order(lexicoder_count$nettone, decreasing = TRUE),c("doc_id", "nettone")]
+dat1$nettone <- ((dat1$positive + dat1$neg_negative) / dat1$total_count) -
+    ((dat1$negative + dat1$neg_positive) / dat1$total_count)
+dat1[order(dat1$nettone, decreasing = TRUE),c("doc_id", "nettone")]
 ```
 
 The Net Tone measures the overall tone of the entire article. That might not be very interesting, because we don't know what words exactly are associated with the so-called positive and negative tones.
@@ -43,12 +43,12 @@ The Net Tone measures the overall tone of the entire article. That might not be 
 An alternative is to consider words that are within a certain window of some keywords you are interested in. It can be done purely with `quanteda`. Suppose you are interested in all "ameri*" keywords and a window of 20.
 
 ```{r window}
-toks %>% tokens_select(c("ameri*"), window = 20) %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
-        convert("data.frame") -> window_count
-window_count$total_count <- token_count
-window_count$nettone <- ((window_count$positive + window_count$neg_negative) / window_count$total_count) -
-    ((window_count$negative + window_count$neg_positive) / window_count$total_count)
-window_count[order(window_count$nettone, decreasing = TRUE),c("doc_id", "nettone")]
+tok1 %>% tokens_select(c("ameri*"), window = 20) %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
+        convert("data.frame") -> dat2
+dat2$total_count <- token_count
+dat2$nettone <- ((dat2$positive + dat2$neg_negative) / dat2$total_count) -
+    ((dat2$negative + dat2$neg_positive) / dat2$total_count)
+dat2[order(dat2$nettone, decreasing = TRUE),c("doc_id", "nettone")]
 ```
 
 ## Alternative II - Proximity
@@ -56,10 +56,10 @@ window_count[order(window_count$nettone, decreasing = TRUE),c("doc_id", "nettone
 We can weight the frequency by the proximity to "ameri*" keywords.
 
 ```{r}
-toks %>% tokens_proximity(c("ameri*")) %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
-        convert("data.frame") -> america_count
-america_count$total_count <- token_count
-america_count$nettone <- ((america_count$positive + america_count$neg_negative) / america_count$total_count) -
-    ((america_count$negative + america_count$neg_positive) / america_count$total_count)
-america_count[order(america_count$nettone, decreasing = TRUE),c("doc_id", "nettone")]
+tok1 %>% tokens_proximity(c("ameri*")) %>% dfm %>% dfm_lookup(data_dictionary_LSD2015) %>%
+        convert("data.frame") -> dat3
+dat3$total_count <- token_count
+dat3$nettone <- ((dat3$positive + dat3$neg_negative) / dat3$total_count) -
+    ((dat3$negative + dat3$neg_positive) / dat3$total_count)
+dat3[order(dat3$nettone, decreasing = TRUE),c("doc_id", "nettone")]
 ```

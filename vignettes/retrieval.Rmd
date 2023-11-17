@@ -15,14 +15,14 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-suppressPackageStartupMessages(library(quanteda))
+library(quanteda, quietly = TRUE)
 library(quanteda.proximity)
 ```
 
 This is a simple example of using `quanteda.proximity` to solve an information retrieval problem. See [this question](https://stackoverflow.com/questions/44057639/how-to-calculate-proximity-of-words-to-a-specific-term-in-a-document) on Stack Overflow. The puzzle is to extract words that are within a 15-word window of "fire" and their proximity values with "fire".
 
 ```{r data}
-song <- "Far over the misty mountains cold To dungeons deep and caverns old We 
+txt1 <- "Far over the misty mountains cold To dungeons deep and caverns old We 
 must away ere break of day To seek the pale enchanted gold. The dwarves of 
 yore made mighty spells, While hammers fell like ringing bells In places deep, 
 where dark things sleep, In hollow halls beneath the fells. For ancient king 
@@ -45,10 +45,11 @@ To win our harps and gold from him!"
 ```
 
 ```{r processing}
-toks <- tokens(song,  remove_punct = TRUE, remove_numbers = TRUE, remove_symbols = TRUE, split_hyphens = TRUE) %>% tokens_tolower() %>% tokens_proximity("fire", count_from = 0)
+tok1 <- tokens(txt1,  remove_punct = TRUE, remove_numbers = TRUE, remove_symbols = TRUE, split_hyphens = TRUE) %>%
+    tokens_tolower() %>% tokens_proximity("fire", count_from = 0)
 ```
 
 ```{r df}
-toks_df <- convert(toks)
-toks_df[toks_df$proximity <= 15 & toks_df$proximity > 0,]
+dat1 <- convert(tok1)
+dat1[dat1$proximity <= 15 & dat1$proximity > 0,]
 ```

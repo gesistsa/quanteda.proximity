@@ -25,7 +25,7 @@ remotes::install_github("gesistsa/quanteda.proximity")
 suppressPackageStartupMessages(library(quanteda))
 library(quanteda.proximity)
 
-testdata <-
+txt1 <-
 c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza conflict, said on Wednesday the Palestinian militant group Hamas was not a terrorist organisation but a liberation group fighting to protect Palestinian lands.",
 "EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros.")
 ```
@@ -34,9 +34,9 @@ c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza c
 a `docvar` (document variable).
 
 ``` r
-res <- testdata %>% tokens() %>% tokens_tolower() %>%
-    tokens_proximity(keywords = "turkish")
-res
+tok1 <- txt1 %>% tokens() %>% tokens_tolower() %>%
+    tokens_proximity(pattern = "turkish")
+tok1
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
@@ -56,7 +56,7 @@ res
 You can access the proximity vectors by
 
 ``` r
-docvars(res, "proximity")
+docvars(tok1, "proximity")
 #> $text1
 #>  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 #> [26] 26 27 28 29 30 31 32 33 34 35 36 37 38
@@ -71,7 +71,7 @@ The `tokens` object with proximity vectors can be converted to a
 assigned by inverting the proximity.
 
 ``` r
-dfm(res)
+dfm(tok1)
 #> Document-feature matrix of: 2 documents, 64 features (45.31% sparse) and 0 docvars.
 #>        features
 #> docs    turkish president    tayyip erdogan         ,         in       his
@@ -88,7 +88,7 @@ You have the freedom to change to another weight function. For example,
 not inverting.
 
 ``` r
-dfm(res, weight_function = identity)
+dfm(tok1, weight_function = identity)
 #> Document-feature matrix of: 2 documents, 64 features (45.31% sparse) and 0 docvars.
 #>        features
 #> docs    turkish president tayyip erdogan  , in his strongest comments yet
@@ -100,7 +100,7 @@ dfm(res, weight_function = identity)
 Or any custom function
 
 ``` r
-dfm(res, weight_function = function(x) { 1 / x^2 })
+dfm(tok1, weight_function = function(x) { 1 / x^2 })
 #> Document-feature matrix of: 2 documents, 64 features (45.31% sparse) and 0 docvars.
 #>        features
 #> docs    turkish president    tayyip erdogan          ,           in        his
@@ -119,9 +119,9 @@ A clumsy example to calculate the total inverse proximity weighted
 frequency of "terror\*" words.
 
 ``` r
-terror_dict <- dictionary(list(TERROR = c("terror*")))
+dict1 <- dictionary(list(TERROR = c("terror*")))
 
-dfm(res) %>% dfm_lookup(terror_dict) %>% rowSums()
+dfm(tok1) %>% dfm_lookup(dict1) %>% rowSums()
 #>      text1      text2 
 #> 0.03703704 0.04545455
 ```
@@ -129,8 +129,8 @@ dfm(res) %>% dfm_lookup(terror_dict) %>% rowSums()
 How about changing the target to “Hamas”?
 
 ``` r
-res2 <- res %>% tokens_proximity(keywords = "hamas")
-res2
+tok2 <- tok1 %>% tokens_proximity(pattern = "hamas")
+tok2
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
@@ -148,7 +148,7 @@ res2
 ```
 
 ``` r
-dfm(res2) %>% dfm_lookup(terror_dict) %>% rowSums()
+dfm(tok2) %>% dfm_lookup(dict1) %>% rowSums()
 #>      text1      text2 
 #> 0.20000000 0.04545455
 ```
@@ -156,8 +156,8 @@ dfm(res2) %>% dfm_lookup(terror_dict) %>% rowSums()
 Can we use two targets, e.g. “EU” and “Brussels”?
 
 ``` r
-res3 <- res %>% tokens_proximity(keywords = c("eu", "brussels"))
-res3
+tok3 <- tok1 %>% tokens_proximity(pattern = c("eu", "brussels"))
+tok3
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
@@ -175,7 +175,7 @@ res3
 ```
 
 ``` r
-docvars(res3, "proximity")
+docvars(tok3, "proximity")
 #> $text1
 #>  [1] 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39 39
 #> [26] 39 39 39 39 39 39 39 39 39 39 39 39 39
@@ -186,7 +186,7 @@ docvars(res3, "proximity")
 ```
 
 ``` r
-dfm(res3) %>% dfm_lookup(terror_dict) %>% rowSums()
+dfm(tok3) %>% dfm_lookup(dict1) %>% rowSums()
 #>      text1      text2 
 #> 0.02564103 0.45833333
 ```
