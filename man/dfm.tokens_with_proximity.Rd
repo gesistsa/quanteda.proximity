@@ -39,11 +39,26 @@ By default, words closer to keywords are weighted higher. You might change that 
 }
 \examples{
 library(quanteda)
-ukimg_eu <- data_char_ukimmig2010 \%>\% tokens(remove_punct = TRUE) \%>\%
-tokens_tolower() \%>\% tokens_proximity(c("eu", "europe", "european"))
-ukimg_eu \%>\% dfm() \%>\% dfm_select(c("immig*", "migr*")) \%>\% rowSums() \%>\% sort()
+tok1 <- data_char_ukimmig2010 \%>\%
+    tokens(remove_punct = TRUE) \%>\%
+    tokens_tolower() \%>\%
+    tokens_proximity(c("eu", "europe", "european"))
+tok1 \%>\%
+    dfm() \%>\%
+    dfm_select(c("immig*", "migr*")) \%>\%
+    rowSums() \%>\%
+    sort()
 ## Words further away from keywords are weighted higher
-ukimg_eu \%>\% dfm(weight_function = identity) \%>\% dfm_select(c("immig*", "migr*")) \%>\% rowSums() \%>\% sort()
-ukimg_eu \%>\% dfm(weight_function = function(x) {1 / x^2}) \%>\%
-dfm_select(c("immig*", "migr*")) \%>\% rowSums() \%>\% sort()
+tok1 \%>\%
+    dfm(weight_function = identity) \%>\%
+    dfm_select(c("immig*", "migr*")) \%>\%
+    rowSums() \%>\%
+    sort()
+tok1 \%>\%
+    dfm(weight_function = function(x) {
+        1 / x^2
+    }) \%>\%
+    dfm_select(c("immig*", "migr*")) \%>\%
+    rowSums() \%>\%
+    sort()
 }
