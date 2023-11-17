@@ -22,7 +22,7 @@ row_mins_c <- function(mat) {
 
 get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
     keywords_poss <- which(attr(x, "types") %in% keywords)
-    purrr::map(x, .get_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from)
+    lapply(unclass(x), .get_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from)
 }
 
 .resolve_keywords <- function(keywords, features, valuetype) {
