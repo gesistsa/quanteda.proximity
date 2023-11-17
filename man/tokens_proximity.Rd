@@ -6,7 +6,7 @@
 \usage{
 tokens_proximity(
   x,
-  keywords,
+  pattern,
   get_min = TRUE,
   valuetype = c("glob", "regex", "fixed"),
   count_from = 1
@@ -15,13 +15,13 @@ tokens_proximity(
 \arguments{
 \item{x}{a \code{tokens} object}
 
+\item{pattern}{Pattern for selecting keywords, see \link[quanteda:pattern]{quanteda::pattern} for details.}
+
 \item{get_min}{logical, whether to return only the minimum distance or raw distance information; it is more relevant when \code{keywords} have more than one word. See details.}
 
 \item{valuetype}{See \link[quanteda:valuetype]{quanteda::valuetype}}
 
 \item{count_from}{numeric, how proximity is counted from when \code{get_min} is \code{TRUE}. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behaviour of \code{\link[=dfm.tokens_with_proximity]{dfm.tokens_with_proximity()}}.}
-
-\item{pattern}{Pattern for selecting keywords, see \link[quanteda:pattern]{quanteda::pattern} for details.}
 }
 \value{
 a \code{tokens_with_proximity} object. It is a derivative of \code{\link[quanteda:tokens]{quanteda::tokens()}}, i.e. all \verb{token_*} functions still work. A \code{tokens_with_proximity} has a modified \code{\link[=print]{print()}} method. Also, additional data slots are included

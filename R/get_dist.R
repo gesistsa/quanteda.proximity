@@ -75,12 +75,12 @@ get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
 #' tok1 %>% tokens_proximity("britain")
 #' @seealso [dfm.tokens_with_proximity()] [quanteda::tokens()]
 #' @export
-tokens_proximity <- function(x, keywords, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), count_from = 1) {
+tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), count_from = 1) {
     if (!inherits(x, "tokens")) {
         stop("x is not a `tokens` object.", call. = FALSE)
     }
     valuetype <- match.arg(valuetype)
-    keywords <- .resolve_keywords(keywords, attr(x, "types"), valuetype)
+    keywords <- .resolve_keywords(pattern, attr(x, "types"), valuetype)
     toks <- x
     proximity <- get_proximity(x = toks, keywords = keywords, get_min = get_min, count_from = count_from)
     quanteda::docvars(toks)$proximity <- I(proximity)
