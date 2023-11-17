@@ -8,8 +8,14 @@
 [![R-CMD-check](https://github.com/gesistsa/quanteda.proximity/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gesistsa/quanteda.proximity/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of quanteda.proximity is to add a hacky layer of proximityp
-vectors into the `tokens` object of `quanteda`.
+The goal of quanteda.proximity is to add proximity vectors into the
+`tokens` object of `quanteda`.
+
+Proximity is measured by the number of tokens away from the keyword.
+Given a tokenized sentence: \[“I”, “wash”, “this”, “apple”\] and suppose
+“eat” is the keyword. The proximity vector is a vector with the same
+length as the tokenized sentence and the values (using the default
+settings) are \[2, 1, 2, 3\].
 
 ## Installation
 
