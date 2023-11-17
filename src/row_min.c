@@ -1,4 +1,5 @@
 #include <R.h>
+#include <R_ext/Rdynload.h>
 #include <Rinternals.h>
 
 SEXP row_mins_(SEXP mat, SEXP nRows, SEXP nCols) {
@@ -21,4 +22,9 @@ SEXP row_mins_(SEXP mat, SEXP nRows, SEXP nCols) {
 
   UNPROTECT(1);
   return mins;
+}
+
+void R_init_row_mins_(DllInfo *info) {
+  R_registerRoutines(info, NULL, NULL, NULL, NULL);
+  R_useDynamicSymbols(info, TRUE);
 }
