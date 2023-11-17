@@ -113,16 +113,14 @@ print.tokens_with_proximity <- function(x, ...) {
 #' @importFrom quanteda convert
 convert.tokens_with_proximity <- function(x, to = c("data.frame"), ...) {
     to <- match.arg(to)
-    purrr::list_rbind(
-        purrr::pmap(
-            list(
-                tokens_obj = as.list(x),
-                proximity_obj = quanteda::docvars(x, "proximity"),
-                doc_id = quanteda::docnames(x)
-            ),
-            .convert_df
-        )
+    result_list <- mapply(
+        FUN = .convert_df,
+        tokens_obj = as.list(x),
+        proximity_obj = quanteda::docvars(x, "proximity"),
+        doc_id = quanteda::docnames(x),
+        SIMPLIFY = FALSE
     )
+    do.call(rbind, result_list)
 }
 
 #' Create a document-feature matrix
