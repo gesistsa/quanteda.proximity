@@ -3,17 +3,17 @@ row_mins_c <- function(mat) {
     .Call("row_mins_", mat, as.integer(nrow(mat)), as.integer(ncol(mat)))
 }
 
-.cal_dist <- function(y, poss) {
+cal_dist <- function(y, poss) {
     return(abs(y - poss))
 }
 
-.get_proximity <- function(tokenized_text, keywords_poss, get_min = TRUE, count_from = 1) {
+cal_proximity <- function(tokenized_text, keywords_poss, get_min = TRUE, count_from = 1) {
     target_idx <- which(tokenized_text %in% keywords_poss)
     poss <- seq_along(tokenized_text)
     if (length(target_idx) == 0) {
         return(rep(length(poss) + count_from, length(poss)))
     }
-    res <- sapply(target_idx, .cal_dist, poss = poss)
+    res <- sapply(target_idx, cal_dist, poss = poss)
     if (get_min) {
         return(row_mins_c(res) + count_from)
     }
@@ -22,10 +22,10 @@ row_mins_c <- function(mat) {
 
 get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
     keywords_poss <- which(attr(x, "types") %in% keywords)
-    lapply(unclass(x), .get_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from)
+    return(lapply(unclass(x), cal_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from))
 }
 
-.resolve_keywords <- function(keywords, features, valuetype) {
+resolve_keywords <- function(keywords, features, valuetype) {
     if (valuetype == "fixed") {
         return(keywords)
     }
@@ -35,7 +35,7 @@ get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
     if (valuetype == "regex") {
         regex <- paste(keywords, collapse = "|")
     }
-    grep(regex, features, value = TRUE)
+    return(grep(regex, features, value = TRUE))
 }
 
 #' Extract Proximity Information
@@ -80,7 +80,7 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
         stop("x is not a `tokens` object.", call. = FALSE)
     }
     valuetype <- match.arg(valuetype)
-    keywords <- .resolve_keywords(pattern, attr(x, "types"), valuetype)
+    keywords <- resolve_keywords(pattern, attr(x, "types"), valuetype)
     toks <- x
     proximity <- get_proximity(x = toks, keywords = keywords, get_min = get_min, count_from = count_from)
     quanteda::docvars(toks)$proximity <- I(proximity)
@@ -90,12 +90,12 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
     return(toks)
 }
 
-.convert_df <- function(tokens_obj, proximity_obj, doc_id) {
-    data.frame(
+convert_df <- function(tokens_obj, proximity_obj, doc_id) {
+    return(data.frame(
         "doc_id" = rep(doc_id, length(tokens_obj)),
         "token" = tokens_obj,
         "proximity" = proximity_obj
-    )
+    ))
 }
 
 #' @method print tokens_with_proximity
@@ -114,13 +114,13 @@ print.tokens_with_proximity <- function(x, ...) {
 convert.tokens_with_proximity <- function(x, to = c("data.frame"), ...) {
     to <- match.arg(to)
     result_list <- mapply(
-        FUN = .convert_df,
+        FUN = convert_df,
         tokens_obj = as.list(x),
         proximity_obj = quanteda::docvars(x, "proximity"),
         doc_id = quanteda::docnames(x),
         SIMPLIFY = FALSE
     )
-    do.call(rbind, result_list)
+    return(do.call(rbind, result_list))
 }
 
 #' Create a document-feature matrix
