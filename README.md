@@ -22,12 +22,7 @@ remotes::install_github("gesistsa/quanteda.proximity")
 ## Example
 
 ``` r
-library(quanteda, quietly = TRUE)
-#> Package version: 3.3.1
-#> Unicode version: 14.0
-#> ICU version: 70.1
-#> Parallel computing: 8 of 8 threads used.
-#> See https://quanteda.io for tutorials and examples.
+suppressPackageStartupMessages(library(quanteda))
 library(quanteda.proximity)
 
 txt1 <-
@@ -40,7 +35,7 @@ a `docvar` (document variable).
 
 ``` r
 tok1 <- txt1 %>% tokens() %>% tokens_tolower() %>%
-    tokens_proximity(keywords = "turkish")
+    tokens_proximity(pattern = "turkish")
 tok1
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
@@ -134,7 +129,7 @@ dfm(tok1) %>% dfm_lookup(dict1) %>% rowSums()
 How about changing the target to “Hamas”?
 
 ``` r
-tok2 <- tok1 %>% tokens_proximity(keywords = "hamas")
+tok2 <- tok1 %>% tokens_proximity(pattern = "hamas")
 tok2
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :
@@ -161,7 +156,7 @@ dfm(tok2) %>% dfm_lookup(dict1) %>% rowSums()
 Can we use two targets, e.g. “EU” and “Brussels”?
 
 ``` r
-tok3 <- tok1 %>% tokens_proximity(keywords = c("eu", "brussels"))
+tok3 <- tok1 %>% tokens_proximity(pattern = c("eu", "brussels"))
 tok3
 #> Tokens consisting of 2 documents and 1 docvar.
 #> text1 :

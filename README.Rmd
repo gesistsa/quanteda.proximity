@@ -32,7 +32,7 @@ remotes::install_github("gesistsa/quanteda.proximity")
 ## Example
 
 ```{r example}
-library(quanteda, quietly = TRUE)
+suppressPackageStartupMessages(library(quanteda))
 library(quanteda.proximity)
 
 txt1 <-
@@ -44,7 +44,7 @@ c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza c
 
 ```{r tokens_proximity}
 tok1 <- txt1 %>% tokens() %>% tokens_tolower() %>%
-    tokens_proximity(keywords = "turkish")
+    tokens_proximity(pattern = "turkish")
 tok1
 ```
 
@@ -85,7 +85,7 @@ dfm(tok1) %>% dfm_lookup(dict1) %>% rowSums()
 How about changing the target to "Hamas"?
 
 ```{r}
-tok2 <- tok1 %>% tokens_proximity(keywords = "hamas")
+tok2 <- tok1 %>% tokens_proximity(pattern = "hamas")
 tok2
 ```
 
@@ -96,7 +96,7 @@ dfm(tok2) %>% dfm_lookup(dict1) %>% rowSums()
 Can we use two targets, e.g. "EU" and "Brussels"?
 
 ```{r}
-tok3 <- tok1 %>% tokens_proximity(keywords = c("eu", "brussels"))
+tok3 <- tok1 %>% tokens_proximity(pattern = c("eu", "brussels"))
 tok3
 ```
 
