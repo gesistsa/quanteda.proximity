@@ -22,7 +22,7 @@ row_mins_c <- function(mat) {
 
 get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
     keywords_poss <- which(attr(x, "types") %in% keywords)
-    purrr::map(x, .get_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from)
+    lapply(unclass(x), .get_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from)
 }
 
 .resolve_keywords <- function(keywords, features, valuetype) {
@@ -113,16 +113,14 @@ print.tokens_with_proximity <- function(x, ...) {
 #' @importFrom quanteda convert
 convert.tokens_with_proximity <- function(x, to = c("data.frame"), ...) {
     to <- match.arg(to)
-    purrr::list_rbind(
-        purrr::pmap(
-            list(
-                tokens_obj = as.list(x),
-                proximity_obj = quanteda::docvars(x, "proximity"),
-                doc_id = quanteda::docnames(x)
-            ),
-            .convert_df
-        )
+    result_list <- mapply(
+        FUN = .convert_df,
+        tokens_obj = as.list(x),
+        proximity_obj = quanteda::docvars(x, "proximity"),
+        doc_id = quanteda::docnames(x),
+        SIMPLIFY = FALSE
     )
+    do.call(rbind, result_list)
 }
 
 #' Create a document-feature matrix
