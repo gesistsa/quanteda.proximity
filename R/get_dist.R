@@ -1,3 +1,8 @@
+#' @useDynLib quanteda.proximity row_mins_
+row_mins_c <- function(mat) {
+    .Call("row_mins_", mat, as.integer(nrow(mat)), as.integer(ncol(mat)))
+}
+
 .cal_dist <- function(y, poss) {
     return(abs(y - poss))
 }
@@ -10,7 +15,7 @@
     }
     res <- sapply(target_idx, .cal_dist, poss = poss)
     if (get_min) {
-        return(row_mins_cpp(res) + count_from)
+        return(row_mins_c(res) + count_from)
     }
     return(res)
 }
@@ -165,16 +170,20 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
                                       }, ...) {
     x_attrs <- attributes(x)
     x_docvars <- quanteda::docvars(x)
-    type <- types(x)
+    type <- quanteda::types(x)
     temp <- unclass(x)
     index <- unlist(temp, use.names = FALSE)
-    val <- weight_function(unlist(docvars(x, "proximity"), use.names = FALSE))
-    temp <- Matrix::sparseMatrix(j = index,
-                                 p = cumsum(c(1L, lengths(x))) - 1L,
-                                 x = val,
-                                 dims = c(length(x),
-                                          length(type)),
-                                 dimnames = list(quanteda::docnames(x), type))
+    val <- weight_function(unlist(quanteda::docvars(x, "proximity"), use.names = FALSE))
+    temp <- Matrix::sparseMatrix(
+        j = index,
+        p = cumsum(c(1L, lengths(x))) - 1L,
+        x = val,
+        dims = c(
+            length(x),
+            length(type)
+        ),
+        dimnames = list(quanteda::docnames(x), type)
+    )
     output <- quanteda::as.dfm(temp)
     attributes(output)[["meta"]] <- x_attrs[["meta"]]
     if (remove_docvars_proximity) {
