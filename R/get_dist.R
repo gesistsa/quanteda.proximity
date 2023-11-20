@@ -76,8 +76,11 @@ resolve_keywords <- function(keywords, features, valuetype) {
 #' @seealso [dfm.tokens_with_proximity()] [quanteda::tokens()]
 #' @export
 tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), count_from = 1) {
-    if (!inherits(x, "tokens")) {
-        stop("x is not a `tokens` object.", call. = FALSE)
+    if (!inherits(x, "tokens") && !inherits(x, "tokens_with_proximity")) {
+        stop("x is not a `tokens` or `tokens_with_proximity` object.", call. = FALSE)
+    }
+    if (inherits(x, "tokens_with_proximity")) {
+        x <- as.tokens(x, remove_docvars_proximity = TRUE)
     }
     valuetype <- match.arg(valuetype)
     keywords <- resolve_keywords(pattern, attr(x, "types"), valuetype)
