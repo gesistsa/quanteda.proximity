@@ -196,3 +196,10 @@ dfm(tok3) %>% dfm_lookup(dict1) %>% rowSums()
 #>      text1      text2 
 #> 0.02564103 0.45833333
 ```
+
+# Similar functions
+
+  - [quanteda](https://quanteda.io/): `quanteda::tokens_select(window)`,
+    `quanteda::fcm()`
+  - [qdap](https://trinker.github.io/qdap): `qdap::word_proximity()`,
+    `qdap::weight()`

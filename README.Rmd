@@ -109,3 +109,8 @@ docvars(tok3, "proximity")
 ```{r}
 dfm(tok3) %>% dfm_lookup(dict1) %>% rowSums()
 ```
+
+# Similar functions
+
+* [quanteda](https://quanteda.io/): `quanteda::tokens_select(window)`, `quanteda::fcm()`
+* [qdap](https://trinker.github.io/qdap): `qdap::word_proximity()`, `qdap::weight()`
