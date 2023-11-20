@@ -45,7 +45,7 @@ c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza c
 `tokens_proximity()` generates the proximity vectors and stores them as a `docvar` (document variable).
 
 ```{r tokens_proximity}
-tok1 <- txt1 %>% tokens() %>% tokens_tolower() %>%
+tok1 <- txt1 %>% tokens() %>%
     tokens_proximity(pattern = "turkish")
 tok1
 ```

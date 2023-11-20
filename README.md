@@ -40,10 +40,10 @@ c("Turkish President Tayyip Erdogan, in his strongest comments yet on the Gaza c
 a `docvar` (document variable).
 
 ``` r
-tok1 <- txt1 %>% tokens() %>% tokens_tolower() %>%
+tok1 <- txt1 %>% tokens() %>%
     tokens_proximity(pattern = "turkish")
 tok1
-#> Tokens consisting of 2 documents and 1 docvar.
+#> Tokens consisting of 2 documents.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
 #>  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      
@@ -137,7 +137,7 @@ How about changing the target to “Hamas”?
 ``` r
 tok2 <- tok1 %>% tokens_proximity(pattern = "hamas")
 tok2
-#> Tokens consisting of 2 documents and 1 docvar.
+#> Tokens consisting of 2 documents.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
 #>  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      
@@ -164,7 +164,7 @@ Can we use two targets, e.g. “EU” and “Brussels”?
 ``` r
 tok3 <- tok1 %>% tokens_proximity(pattern = c("eu", "brussels"))
 tok3
-#> Tokens consisting of 2 documents and 1 docvar.
+#> Tokens consisting of 2 documents.
 #> text1 :
 #>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
 #>  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      

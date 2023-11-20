@@ -114,9 +114,7 @@ convert_df <- function(tokens_obj, proximity_obj, doc_id) {
 #' @method print tokens_with_proximity
 #' @export
 print.tokens_with_proximity <- function(x, ...) {
-    y <- x
-    class(y) <- "tokens"
-    print(y, ...)
+    print(as.tokens(x), ...)
     cat("With proximity vector(s).\n")
     cat("keywords: ", quanteda::meta(x, field = "keywords"), "\n")
 }
