@@ -51,3 +51,14 @@ test_that("token_proximity() only emit token_proximity #35", {
     expect_error(tokens_select(as.tokens(res), "life"), NA)
 })
 
+test_that("tolower", {
+    suppressPackageStartupMessages(library(quanteda))
+    "this is my MIT life" %>% tokens() %>% tokens_proximity("my") -> res
+    expect_false("MIT" %in% attr(res, "types"))
+    "this is my MIT life" %>% tokens() %>% tokens_proximity("my", tolower = FALSE) -> res
+    expect_true("MIT" %in% attr(res, "types"))
+    "this is my MIT life" %>% tokens() %>% tokens_proximity("my", tolower = TRUE, keep_acronyms = TRUE) -> res
+    expect_true("MIT" %in% attr(res, "types"))
+    expect_true("tolower" %in% names(meta(res)))
+    expect_true("keep_acronyms" %in% names(meta(res)))    
+})

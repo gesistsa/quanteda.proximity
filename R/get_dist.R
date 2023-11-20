@@ -41,17 +41,21 @@ resolve_keywords <- function(keywords, features, valuetype) {
 #' Extract Proximity Information
 #'
 #' This function extracts distance information from a [quanteda::tokens()] object.
-#' @param x a `tokens` or `tokens_with_proximity` object
-#' @param pattern Pattern for selecting keywords, see [quanteda::pattern] for details.
+#' @param x a `tokens` or `tokens_with_proximity` object.
+#' @param pattern pattern for selecting keywords, see [quanteda::pattern] for details.
 #' @param get_min logical, whether to return only the minimum distance or raw distance information; it is more relevant when `keywords` have more than one word. See details.
-#' @param valuetype See [quanteda::valuetype]
+#' @param valuetype See [quanteda::valuetype].
 #' @param count_from numeric, how proximity is counted from when `get_min` is `TRUE`. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behaviour of [dfm.tokens_with_proximity()].
+#' @param tolower logical, convert all features to lowercase.
+#' @param keep_acronyms logical, if `TRUE`, do not lowercase any all-uppercase words. See [quanteda::tokens_tolower()].
 #' @details Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: \["I", "eat", "this", "apple"\] and suppose "eat" is the keyword. The vector of minimum proximity for each word from "eat" is \[2, 1, 2, 3\], if `count_from` is 1. In another case: \["I", "wash", "and", "eat", "this", "apple"\] and \["wash", "eat"\] are the keywords. The minimal distance vector is \[2, 1, 2, 1, 2, 3\]. If `get_min` is `FALSE`, the output is a list of two vectors. For "wash", the distance vector is \[1, 0, 1, 2, 3\]. For "eat", \[3, 2, 1, 0, 1, 2\].
 #' Please conduct all text maniputation tasks with `tokens_*()` functions before calling this function. To convert the output back to a `tokens` object, use [quanteda::as.tokens()].
 #' @return a `tokens_with_proximity` object. It is similar to [quanteda::tokens()], but only [dfm.tokens_with_proximity()], [quanteda::convert()], [quanteda::docvars()], and [quanteda::meta()] methods are available. A `tokens_with_proximity` has a modified [print()] method. Also, additional data slots are included
 #' * a document variation `dist`
 #' * a metadata slot `keywords`
 #' * a metadata slot `get_min`
+#' * a metadata slot `tolower`
+#' * a metadata slot `keep_acronyms`
 #' @examples
 #' library(quanteda)
 #' tok1 <- data_char_ukimmig2010 %>%
@@ -75,12 +79,16 @@ resolve_keywords <- function(keywords, features, valuetype) {
 #' tok1 %>% tokens_proximity("britain")
 #' @seealso [dfm.tokens_with_proximity()] [quanteda::tokens()]
 #' @export
-tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), count_from = 1) {
+tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), count_from = 1,
+                             tolower = TRUE, keep_acronyms = FALSE) {
     if (!inherits(x, "tokens") && !inherits(x, "tokens_with_proximity")) {
         stop("x is not a `tokens` or `tokens_with_proximity` object.", call. = FALSE)
     }
     if (inherits(x, "tokens_with_proximity")) {
         x <- as.tokens(x, remove_docvars_proximity = TRUE)
+    }
+    if (tolower) {
+        x <- quanteda::tokens_tolower(x, keep_acronyms = keep_acronyms)
     }
     valuetype <- match.arg(valuetype)
     keywords <- resolve_keywords(pattern, attr(x, "types"), valuetype)
@@ -89,6 +97,8 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
     quanteda::docvars(toks)$proximity <- I(proximity)
     quanteda::meta(toks, field = "keywords") <- keywords
     quanteda::meta(toks, field = "get_min") <- get_min
+    quanteda::meta(toks, field = "tolower") <- tolower
+    quanteda::meta(toks, field = "keep_acronyms") <- keep_acronyms
     class(toks) <- c("tokens_with_proximity")
     return(toks)
 }

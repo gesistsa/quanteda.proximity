@@ -9,19 +9,25 @@ tokens_proximity(
   pattern,
   get_min = TRUE,
   valuetype = c("glob", "regex", "fixed"),
-  count_from = 1
+  count_from = 1,
+  tolower = TRUE,
+  keep_acronyms = FALSE
 )
 }
 \arguments{
-\item{x}{a \code{tokens} or \code{tokens_with_proximity} object}
+\item{x}{a \code{tokens} or \code{tokens_with_proximity} object.}
 
-\item{pattern}{Pattern for selecting keywords, see \link[quanteda:pattern]{quanteda::pattern} for details.}
+\item{pattern}{pattern for selecting keywords, see \link[quanteda:pattern]{quanteda::pattern} for details.}
 
 \item{get_min}{logical, whether to return only the minimum distance or raw distance information; it is more relevant when \code{keywords} have more than one word. See details.}
 
-\item{valuetype}{See \link[quanteda:valuetype]{quanteda::valuetype}}
+\item{valuetype}{See \link[quanteda:valuetype]{quanteda::valuetype}.}
 
 \item{count_from}{numeric, how proximity is counted from when \code{get_min} is \code{TRUE}. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behaviour of \code{\link[=dfm.tokens_with_proximity]{dfm.tokens_with_proximity()}}.}
+
+\item{tolower}{logical, convert all features to lowercase.}
+
+\item{keep_acronyms}{logical, if \code{TRUE}, do not lowercase any all-uppercase words. See \code{\link[quanteda:tokens_tolower]{quanteda::tokens_tolower()}}.}
 }
 \value{
 a \code{tokens_with_proximity} object. It is similar to \code{\link[quanteda:tokens]{quanteda::tokens()}}, but only \code{\link[=dfm.tokens_with_proximity]{dfm.tokens_with_proximity()}}, \code{\link[quanteda:convert]{quanteda::convert()}}, \code{\link[quanteda:docvars]{quanteda::docvars()}}, and \code{\link[quanteda:meta]{quanteda::meta()}} methods are available. A \code{tokens_with_proximity} has a modified \code{\link[=print]{print()}} method. Also, additional data slots are included
@@ -29,6 +35,8 @@ a \code{tokens_with_proximity} object. It is similar to \code{\link[quanteda:tok
 \item a document variation \code{dist}
 \item a metadata slot \code{keywords}
 \item a metadata slot \code{get_min}
+\item a metadata slot \code{tolower}
+\item a metadata slot \code{keep_acronyms}
 }
 }
 \description{
