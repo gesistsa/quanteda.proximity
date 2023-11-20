@@ -28,3 +28,10 @@ test_that("convert", {
     "this is my life" %>% tokens() %>% tokens_proximity("my") %>% convert() -> res
     expect_true(is.data.frame(res))
 })
+
+test_that("convert no strange rownames, #39", {
+    suppressPackageStartupMessages(library(quanteda))
+    "this is my life" %>% tokens() %>% tokens_proximity("my") %>% convert() -> res
+    expect_true(is.data.frame(res))
+    expect_equal(rownames(res), c("1", "2", "3", "4")) ## default rownames
+})
