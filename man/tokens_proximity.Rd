@@ -13,7 +13,7 @@ tokens_proximity(
 )
 }
 \arguments{
-\item{x}{a \code{tokens} object}
+\item{x}{a \code{tokens} or \code{tokens_with_proximity} object}
 
 \item{pattern}{Pattern for selecting keywords, see \link[quanteda:pattern]{quanteda::pattern} for details.}
 
@@ -36,7 +36,7 @@ This function extracts distance information from a \code{\link[quanteda:tokens]{
 }
 \details{
 Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: ["I", "eat", "this", "apple"] and suppose "eat" is the keyword. The vector of minimum proximity for each word from "eat" is [2, 1, 2, 3], if \code{count_from} is 1. In another case: ["I", "wash", "and", "eat", "this", "apple"] and ["wash", "eat"] are the keywords. The minimal distance vector is [2, 1, 2, 1, 2, 3]. If \code{get_min} is \code{FALSE}, the output is a list of two vectors. For "wash", the distance vector is [1, 0, 1, 2, 3]. For "eat", [3, 2, 1, 0, 1, 2].
-It is recommended conducting all text maniputation tasks with \verb{tokens_*()} functions before calling this function.
+Please conduct all text maniputation tasks with \verb{tokens_*()} functions before calling this function. To convert the output back to a \code{tokens} object, use \code{\link[quanteda:as.tokens]{quanteda::as.tokens()}}.
 }
 \examples{
 library(quanteda)

@@ -41,13 +41,13 @@ resolve_keywords <- function(keywords, features, valuetype) {
 #' Extract Proximity Information
 #'
 #' This function extracts distance information from a [quanteda::tokens()] object.
-#' @param x a `tokens` object
+#' @param x a `tokens` or `tokens_with_proximity` object
 #' @param pattern Pattern for selecting keywords, see [quanteda::pattern] for details.
 #' @param get_min logical, whether to return only the minimum distance or raw distance information; it is more relevant when `keywords` have more than one word. See details.
 #' @param valuetype See [quanteda::valuetype]
 #' @param count_from numeric, how proximity is counted from when `get_min` is `TRUE`. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behaviour of [dfm.tokens_with_proximity()].
 #' @details Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: \["I", "eat", "this", "apple"\] and suppose "eat" is the keyword. The vector of minimum proximity for each word from "eat" is \[2, 1, 2, 3\], if `count_from` is 1. In another case: \["I", "wash", "and", "eat", "this", "apple"\] and \["wash", "eat"\] are the keywords. The minimal distance vector is \[2, 1, 2, 1, 2, 3\]. If `get_min` is `FALSE`, the output is a list of two vectors. For "wash", the distance vector is \[1, 0, 1, 2, 3\]. For "eat", \[3, 2, 1, 0, 1, 2\].
-#' It is recommended conducting all text maniputation tasks with `tokens_*()` functions before calling this function.
+#' Please conduct all text maniputation tasks with `tokens_*()` functions before calling this function. To convert the output back to a `tokens` object, use [quanteda::as.tokens()].
 #' @return a `tokens_with_proximity` object. It is similar to [quanteda::tokens()], but only [dfm.tokens_with_proximity()], [quanteda::convert()], [quanteda::docvars()], and [quanteda::meta()] methods are available. A `tokens_with_proximity` has a modified [print()] method. Also, additional data slots are included
 #' * a document variation `dist`
 #' * a metadata slot `keywords`
