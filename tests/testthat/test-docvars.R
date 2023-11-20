@@ -20,3 +20,10 @@ test_that("meta retention", {
     expect_equal(test_corpus %>% tokens() %>% dfm() %>% meta("what"), "test")
     expect_equal(test_corpus %>% tokens() %>% tokens_proximity(pattern = "world") %>% dfm() %>% meta("what"), "test")
 })
+
+test_that("docvars and meta methods", {
+    suppressPackageStartupMessages(library(quanteda))
+    test <- c("hello world!")
+    expect_equal(tokens(test) %>% tokens_proximity("world") %>% docvars() %>% colnames(), "proximity")
+    expect_error(tokens(test) %>% tokens_proximity("world") %>% meta(), NA)
+})

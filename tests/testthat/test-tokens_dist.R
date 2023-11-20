@@ -42,3 +42,12 @@ test_that("Changing keywords", {
     expect_error(res2 <- tokens_proximity(res, "life"), NA)
     expect_equal(meta(res2, "keywords"), "life")
 })
+
+test_that("token_proximity() only emit token_proximity #35", {
+    suppressPackageStartupMessages(library(quanteda))
+    "this is my life" %>% tokens() %>% tokens_proximity("my") -> res
+    expect_equal(class(res), "tokens_with_proximity") # no tokens
+    expect_error(tokens_select(res, "life"))
+    expect_error(tokens_select(as.tokens(res), "life"), NA)
+})
+
