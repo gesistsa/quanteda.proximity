@@ -86,10 +86,10 @@
 <span><span class="st">"EU policymakers proposed the new agency in 2021 to stop financial firms from aiding criminals and terrorists. Brussels has so far relied on national regulators with no EU authority to stop money laundering and terrorist financing running into billions of euros."</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="reference/tokens_proximity.html">tokens_proximity()</a></code> generates the proximity vectors and stores them as a <code>docvar</code> (document variable).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tok1</span> <span class="op">&lt;-</span> <span class="va">txt1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://quanteda.io/reference/tokens.html" class="external-link">tokens</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://quanteda.io/reference/tokens_tolower.html" class="external-link">tokens_tolower</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">tok1</span> <span class="op">&lt;-</span> <span class="va">txt1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://quanteda.io/reference/tokens.html" class="external-link">tokens</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="reference/tokens_proximity.html">tokens_proximity</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"turkish"</span><span class="op">)</span></span>
 <span><span class="va">tok1</span></span>
-<span><span class="co">#&gt; Tokens consisting of 2 documents and 1 docvar.</span></span>
+<span><span class="co">#&gt; Tokens consisting of 2 documents.</span></span>
 <span><span class="co">#&gt; text1 :</span></span>
 <span><span class="co">#&gt;  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       </span></span>
 <span><span class="co">#&gt;  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      </span></span>
@@ -163,7 +163,7 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tok2</span> <span class="op">&lt;-</span> <span class="va">tok1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="reference/tokens_proximity.html">tokens_proximity</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"hamas"</span><span class="op">)</span></span>
 <span><span class="va">tok2</span></span>
-<span><span class="co">#&gt; Tokens consisting of 2 documents and 1 docvar.</span></span>
+<span><span class="co">#&gt; Tokens consisting of 2 documents.</span></span>
 <span><span class="co">#&gt; text1 :</span></span>
 <span><span class="co">#&gt;  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       </span></span>
 <span><span class="co">#&gt;  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      </span></span>
@@ -185,7 +185,7 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tok3</span> <span class="op">&lt;-</span> <span class="va">tok1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="reference/tokens_proximity.html">tokens_proximity</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"eu"</span>, <span class="st">"brussels"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">tok3</span></span>
-<span><span class="co">#&gt; Tokens consisting of 2 documents and 1 docvar.</span></span>
+<span><span class="co">#&gt; Tokens consisting of 2 documents.</span></span>
 <span><span class="co">#&gt; text1 :</span></span>
 <span><span class="co">#&gt;  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       </span></span>
 <span><span class="co">#&gt;  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      </span></span>

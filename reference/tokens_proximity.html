@@ -54,18 +54,20 @@
 <span>  <span class="va">pattern</span>,</span>
 <span>  get_min <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  valuetype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"glob"</span>, <span class="st">"regex"</span>, <span class="st">"fixed"</span><span class="op">)</span>,</span>
-<span>  count_from <span class="op">=</span> <span class="fl">1</span></span>
+<span>  count_from <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  tolower <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  keep_acronyms <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>a <code>tokens</code> or <code>tokens_with_proximity</code> object</p></dd>
+<dd><p>a <code>tokens</code> or <code>tokens_with_proximity</code> object.</p></dd>
 
 
 <dt>pattern</dt>
-<dd><p>Pattern for selecting keywords, see <a href="https://quanteda.io/reference/pattern.html" class="external-link">quanteda::pattern</a> for details.</p></dd>
+<dd><p>pattern for selecting keywords, see <a href="https://quanteda.io/reference/pattern.html" class="external-link">quanteda::pattern</a> for details.</p></dd>
 
 
 <dt>get_min</dt>
@@ -73,11 +75,19 @@
 
 
 <dt>valuetype</dt>
-<dd><p>See <a href="https://quanteda.io/reference/valuetype.html" class="external-link">quanteda::valuetype</a></p></dd>
+<dd><p>See <a href="https://quanteda.io/reference/valuetype.html" class="external-link">quanteda::valuetype</a>.</p></dd>
 
 
 <dt>count_from</dt>
 <dd><p>numeric, how proximity is counted from when <code>get_min</code> is <code>TRUE</code>. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behaviour of <code><a href="dfm.tokens_with_proximity.html">dfm.tokens_with_proximity()</a></code>.</p></dd>
+
+
+<dt>tolower</dt>
+<dd><p>logical, convert all features to lowercase.</p></dd>
+
+
+<dt>keep_acronyms</dt>
+<dd><p>logical, if <code>TRUE</code>, do not lowercase any all-uppercase words. See <code><a href="https://quanteda.io/reference/tokens_tolower.html" class="external-link">quanteda::tokens_tolower()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -87,6 +97,8 @@
 <p>a <code>tokens_with_proximity</code> object. It is similar to <code><a href="https://quanteda.io/reference/tokens.html" class="external-link">quanteda::tokens()</a></code>, but only <code><a href="dfm.tokens_with_proximity.html">dfm.tokens_with_proximity()</a></code>, <code><a href="https://quanteda.io/reference/convert.html" class="external-link">quanteda::convert()</a></code>, <code><a href="https://quanteda.io/reference/docvars.html" class="external-link">quanteda::docvars()</a></code>, and <code><a href="https://quanteda.io/reference/meta.html" class="external-link">quanteda::meta()</a></code> methods are available. A <code>tokens_with_proximity</code> has a modified <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> method. Also, additional data slots are included</p><ul><li><p>a document variation <code>dist</code></p></li>
 <li><p>a metadata slot <code>keywords</code></p></li>
 <li><p>a metadata slot <code>get_min</code></p></li>
+<li><p>a metadata slot <code>tolower</code></p></li>
+<li><p>a metadata slot <code>keep_acronyms</code></p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -128,7 +140,7 @@ Please conduct all text maniputation tasks with <code>tokens_*()</code> function
 <span class="r-out co"><span class="r-pr">#&gt;</span>           16           20           35 </span>
 <span class="r-in"><span><span class="co">## rerun to select other keywords</span></span></span>
 <span class="r-in"><span><span class="va">tok1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">tokens_proximity</span><span class="op">(</span><span class="st">"britain"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tokens consisting of 9 documents and 1 docvar.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tokens consisting of 9 documents.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> BNP :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "immigration"  "an"           "unparalleled" "crisis"       "which"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "only"         "the"          "bnp"          "can"          "solve"       </span>
