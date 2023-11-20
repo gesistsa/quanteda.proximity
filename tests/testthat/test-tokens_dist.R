@@ -35,3 +35,10 @@ test_that("convert no strange rownames, #39", {
     expect_true(is.data.frame(res))
     expect_equal(rownames(res), c("1", "2", "3", "4")) ## default rownames
 })
+
+test_that("Changing keywords", {
+    suppressPackageStartupMessages(library(quanteda))
+    "this is my life" %>% tokens() %>% tokens_proximity("my") -> res
+    expect_error(res2 <- tokens_proximity(res, "life"), NA)
+    expect_equal(meta(res2, "keywords"), "life")
+})
