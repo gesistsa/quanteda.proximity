@@ -61,7 +61,7 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>a <code>tokens</code> object</p></dd>
+<dd><p>a <code>tokens</code> or <code>tokens_with_proximity</code> object</p></dd>
 
 
 <dt>pattern</dt>
@@ -84,14 +84,14 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>a <code>tokens_with_proximity</code> object. It is a derivative of <code><a href="https://quanteda.io/reference/tokens.html" class="external-link">quanteda::tokens()</a></code>, i.e. all <code>token_*</code> functions still work. A <code>tokens_with_proximity</code> has a modified <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> method. Also, additional data slots are included</p><ul><li><p>a document variation <code>dist</code></p></li>
+<p>a <code>tokens_with_proximity</code> object. It is similar to <code><a href="https://quanteda.io/reference/tokens.html" class="external-link">quanteda::tokens()</a></code>, but only <code><a href="dfm.tokens_with_proximity.html">dfm.tokens_with_proximity()</a></code>, <code><a href="https://quanteda.io/reference/convert.html" class="external-link">quanteda::convert()</a></code>, <code><a href="https://quanteda.io/reference/docvars.html" class="external-link">quanteda::docvars()</a></code>, and <code><a href="https://quanteda.io/reference/meta.html" class="external-link">quanteda::meta()</a></code> methods are available. A <code>tokens_with_proximity</code> has a modified <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> method. Also, additional data slots are included</p><ul><li><p>a document variation <code>dist</code></p></li>
 <li><p>a metadata slot <code>keywords</code></p></li>
 <li><p>a metadata slot <code>get_min</code></p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: ["I", "eat", "this", "apple"] and suppose "eat" is the target. The vector of minimum proximity for each word from "eat" is [2, 1, 2, 3], if <code>count_from</code> is 1. In another case: ["I", "wash", "and", "eat", "this", "apple"] and ["wash", "eat"] are the keywords. The minimal distance vector is [2, 1, 2, 1, 2, 3]. If <code>get_min</code> is <code>FALSE</code>, the output is a list of two vectors. For "wash", the distance vector is [1, 0, 1, 2, 3]. For "eat", [3, 2, 1, 0, 1, 2].
-It is recommended conducting all text maniputation tasks with <code>tokens_*()</code> functions before calling this function.</p>
+    <p>Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: ["I", "eat", "this", "apple"] and suppose "eat" is the keyword. The vector of minimum proximity for each word from "eat" is [2, 1, 2, 3], if <code>count_from</code> is 1. In another case: ["I", "wash", "and", "eat", "this", "apple"] and ["wash", "eat"] are the keywords. The minimal distance vector is [2, 1, 2, 1, 2, 3]. If <code>get_min</code> is <code>FALSE</code>, the output is a list of two vectors. For "wash", the distance vector is [1, 0, 1, 2, 3]. For "eat", [3, 2, 1, 0, 1, 2].
+Please conduct all text maniputation tasks with <code>tokens_*()</code> functions before calling this function. To convert the output back to a <code>tokens</code> object, use <code><a href="https://quanteda.io/reference/as.tokens.html" class="external-link">quanteda::as.tokens()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
