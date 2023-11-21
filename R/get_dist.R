@@ -106,7 +106,9 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
     proximity <- get_proximity(x = toks, pattern = pattern, get_min = get_min, count_from = count_from,
                                valuetype = valuetype, case_insensitive = case_insensitive)
     quanteda::docvars(toks)$proximity <- I(proximity)
+    ## only for printing
     quanteda::meta(toks, field = "pattern") <- pp(pattern)
+    attr(toks, "pattern") <- pattern ## custom field
     quanteda::meta(toks, field = "get_min") <- get_min
     quanteda::meta(toks, field = "tolower") <- tolower
     quanteda::meta(toks, field = "keep_acronyms") <- keep_acronyms
@@ -136,6 +138,7 @@ print.tokens_with_proximity <- function(x, ...) {
 as.tokens.tokens_with_proximity <- function(x, concatenator = "/", remove_docvars_proximity = TRUE, ...) {
     if (remove_docvars_proximity) {
         attr(x, which = "docvars")$proximity <- NULL
+        attr(x, which = "pattern") <- NULL
     }
     class(x) <- "tokens"
     return(x)

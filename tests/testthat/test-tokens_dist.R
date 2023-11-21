@@ -56,3 +56,19 @@ test_that("tolower", {
     expect_true("tolower" %in% names(meta(res)))
     expect_true("keep_acronyms" %in% names(meta(res)))    
 })
+
+test_that("case_insensitive", {
+    suppressPackageStartupMessages(library(quanteda))
+    "this is my MIT life" %>% tokens() %>% tokens_proximity("MIT") -> res
+    expect_false("MIT" %in% attr(res, "types"))
+    expect_equal(docvars(res, "proximity")$text1, c(4, 3, 2, 1, 2))
+    "this is my MIT life" %>% tokens() %>% tokens_proximity("MIT", case_insensitive = FALSE) -> res
+    expect_false("MIT" %in% attr(res, "types"))
+    expect_equal(docvars(res, "proximity")$text1, c(6, 6, 6, 6, 6))    
+})
+
+test_that("phrase", {
+    suppressPackageStartupMessages(library(quanteda))
+    expect_error("Seid ihr das Essen? Nein, wir sind die Jäger." %>% tokens() %>% tokens_proximity(phrase("das Essen")) -> res, NA)
+    expect_equal(docvars(res, "proximity")$text1, c(3,2,1,1,2,3,4,5,6,7,8,9))
+})
