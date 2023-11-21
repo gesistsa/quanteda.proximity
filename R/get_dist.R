@@ -3,39 +3,49 @@ row_mins_c <- function(mat) {
     .Call("row_mins_", mat, as.integer(nrow(mat)), as.integer(ncol(mat)))
 }
 
-cal_dist <- function(y, poss) {
-    return(abs(y - poss))
+cal_dist <- function(from, to, poss) {
+    return(pmin(abs(to - poss), abs(from - poss)))
 }
 
-cal_proximity <- function(tokenized_text, keywords_poss, get_min = TRUE, count_from = 1) {
-    target_idx <- which(tokenized_text %in% keywords_poss)
-    poss <- seq_along(tokenized_text)
-    if (length(target_idx) == 0) {
-        return(rep(length(poss) + count_from, length(poss)))
-    }
-    res <- sapply(target_idx, cal_dist, poss = poss)
-    if (get_min) {
-        return(row_mins_c(res) + count_from)
-    }
-    return(res)
+cal_dist_singular <- function(from, to, poss) {
+    return(abs(from - poss))
 }
 
-get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
-    keywords_poss <- which(attr(x, "types") %in% keywords)
-    return(lapply(unclass(x), cal_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from))
+get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype, case_insensitive) {
+    output <- list()
+    idx <- quanteda::index(x, pattern = pattern, valuetype = valuetype, case_insensitive = case_insensitive)
+    singular_pattern_only <- all(idx$to == idx$from)
+    if (singular_pattern_only) {
+        cal_func <- cal_dist_singular
+    } else {
+        cal_func <- cal_dist
+    }
+    nt <- as.numeric(quanteda::ntoken(x))
+    dn <- quanteda::docnames(x)
+    for (i in seq_along(x)) {
+        if (dn[i] %in% idx$docname) {
+            poss <- seq_len(nt[i])
+            matched_rows <- idx$docname == dn[i]
+            res <- mapply(cal_func, from = idx$from[matched_rows], to = idx$to[matched_rows], MoreArgs = list("poss" = poss))
+            if (get_min) {
+                output[[i]] <- row_mins_c(res) + count_from
+            } else {
+                output[[i]] <- res
+            }
+        } else {
+            output[[i]] <- rep(nt[i] + count_from, nt[i])
+        }
+    }
+    names(output) <- quanteda::docnames(x)
+    return(output)
 }
 
-resolve_keywords <- function(keywords, features, valuetype) {
-    if (valuetype == "fixed") {
-        return(keywords)
+pp <- function(pattern) {
+    ## pretty print the pattern if it contains phrases
+    if (!is.list(pattern)) {
+        return(pattern)
     }
-    if (valuetype == "glob") {
-        regex <- paste(utils::glob2rx(keywords), collapse = "|")
-    }
-    if (valuetype == "regex") {
-        regex <- paste(keywords, collapse = "|")
-    }
-    return(grep(regex, features, value = TRUE))
+    return(vapply(pattern, paste, collapse = " ", character(1)))
 }
 
 #' Extract Proximity Information
@@ -45,6 +55,7 @@ resolve_keywords <- function(keywords, features, valuetype) {
 #' @param pattern pattern for selecting keywords, see [quanteda::pattern] for details.
 #' @param get_min logical, whether to return only the minimum distance or raw distance information; it is more relevant when `keywords` have more than one word. See details.
 #' @param valuetype See [quanteda::valuetype].
+#' @param case_insensitive logical, see [quanteda::valuetype].
 #' @param count_from numeric, how proximity is counted from when `get_min` is `TRUE`. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behaviour of [dfm.tokens_with_proximity()].
 #' @param tolower logical, convert all features to lowercase.
 #' @param keep_acronyms logical, if `TRUE`, do not lowercase any all-uppercase words. See [quanteda::tokens_tolower()].
@@ -79,7 +90,7 @@ resolve_keywords <- function(keywords, features, valuetype) {
 #' tok1 %>% tokens_proximity("britain")
 #' @seealso [dfm.tokens_with_proximity()] [quanteda::tokens()]
 #' @export
-tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), count_from = 1,
+tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), case_insensitive = TRUE, count_from = 1,
                              tolower = TRUE, keep_acronyms = FALSE) {
     if (!inherits(x, "tokens") && !inherits(x, "tokens_with_proximity")) {
         stop("x is not a `tokens` or `tokens_with_proximity` object.", call. = FALSE)
@@ -91,11 +102,13 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
         x <- quanteda::tokens_tolower(x, keep_acronyms = keep_acronyms)
     }
     valuetype <- match.arg(valuetype)
-    keywords <- resolve_keywords(pattern, attr(x, "types"), valuetype)
     toks <- x
-    proximity <- get_proximity(x = toks, keywords = keywords, get_min = get_min, count_from = count_from)
+    proximity <- get_proximity(x = toks, pattern = pattern, get_min = get_min, count_from = count_from,
+                               valuetype = valuetype, case_insensitive = case_insensitive)
     quanteda::docvars(toks)$proximity <- I(proximity)
-    quanteda::meta(toks, field = "keywords") <- keywords
+    ## only for printing
+    quanteda::meta(toks, field = "pattern") <- pp(pattern)
+    attr(toks, "pattern") <- pattern ## custom field
     quanteda::meta(toks, field = "get_min") <- get_min
     quanteda::meta(toks, field = "tolower") <- tolower
     quanteda::meta(toks, field = "keep_acronyms") <- keep_acronyms
@@ -116,7 +129,7 @@ convert_df <- function(tokens_obj, proximity_obj, doc_id) {
 print.tokens_with_proximity <- function(x, ...) {
     print(as.tokens(x), ...)
     cat("With proximity vector(s).\n")
-    cat("keywords: ", quanteda::meta(x, field = "keywords"), "\n")
+    cat("Pattern: ", quanteda::meta(x, field = "pattern"), "\n")
 }
 
 #' @importFrom quanteda as.tokens
@@ -125,6 +138,7 @@ print.tokens_with_proximity <- function(x, ...) {
 as.tokens.tokens_with_proximity <- function(x, concatenator = "/", remove_docvars_proximity = TRUE, ...) {
     if (remove_docvars_proximity) {
         attr(x, which = "docvars")$proximity <- NULL
+        attr(x, which = "pattern") <- NULL
     }
     class(x) <- "tokens"
     return(x)
@@ -134,14 +148,14 @@ as.tokens.tokens_with_proximity <- function(x, concatenator = "/", remove_docvar
 #' @method docvars tokens_with_proximity
 #' @export
 docvars.tokens_with_proximity <- function(x, field = NULL) {
-    quanteda::docvars(as.tokens(x, remove_docvars_proximity = FALSE), field = field)
+    return(quanteda::docvars(as.tokens(x, remove_docvars_proximity = FALSE), field = field))
 }
 
 #' @importFrom quanteda meta
 #' @method meta tokens_with_proximity
 #' @export
 meta.tokens_with_proximity <- function(x, field = NULL, type = c("user", "object", "system", "all")) {
-    quanteda::meta(as.tokens(x, remove_docvars_proximity = FALSE), field = field, type = type)
+    return(quanteda::meta(as.tokens(x, remove_docvars_proximity = FALSE), field = field, type = type))
 }
 
 #' @method convert tokens_with_proximity

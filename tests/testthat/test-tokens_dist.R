@@ -6,12 +6,6 @@ test_that("edge cases", {
     expect_error("" %>% tokens() %>% tokens_proximity("") %>% convert(), NA)
 })
 
-test_that("resolve_keywords", {
-    expect_equal(resolve_keywords(c("abc", "def"), c("abcd", "defa"), valuetype = "fixed"), c("abc", "def"))
-    expect_equal(resolve_keywords(c("abc*", "def*"), c("abcd", "defa"), valuetype = "glob"), c("abcd", "defa"))
-    expect_equal(resolve_keywords(c("a"), c("abcd", "defa"), valuetype = "regex"), c("abcd", "defa"))
-})
-
 test_that("count_from", {
     suppressPackageStartupMessages(library(quanteda))
     "this is my life" %>% tokens() %>% tokens_proximity("my") %>% docvars("proximity") -> res
@@ -36,11 +30,11 @@ test_that("convert no strange rownames, #39", {
     expect_equal(rownames(res), c("1", "2", "3", "4")) ## default rownames
 })
 
-test_that("Changing keywords", {
+test_that("Changing pattern", {
     suppressPackageStartupMessages(library(quanteda))
     "this is my life" %>% tokens() %>% tokens_proximity("my") -> res
     expect_error(res2 <- tokens_proximity(res, "life"), NA)
-    expect_equal(meta(res2, "keywords"), "life")
+    expect_equal(meta(res2, "pattern"), "life")
 })
 
 test_that("token_proximity() only emit token_proximity #35", {
@@ -61,4 +55,20 @@ test_that("tolower", {
     expect_true("MIT" %in% attr(res, "types"))
     expect_true("tolower" %in% names(meta(res)))
     expect_true("keep_acronyms" %in% names(meta(res)))    
+})
+
+test_that("case_insensitive", {
+    suppressPackageStartupMessages(library(quanteda))
+    "this is my MIT life" %>% tokens() %>% tokens_proximity("MIT") -> res
+    expect_false("MIT" %in% attr(res, "types"))
+    expect_equal(docvars(res, "proximity")$text1, c(4, 3, 2, 1, 2))
+    "this is my MIT life" %>% tokens() %>% tokens_proximity("MIT", case_insensitive = FALSE) -> res
+    expect_false("MIT" %in% attr(res, "types"))
+    expect_equal(docvars(res, "proximity")$text1, c(6, 6, 6, 6, 6))    
+})
+
+test_that("phrase", {
+    suppressPackageStartupMessages(library(quanteda))
+    expect_error("Seid ihr das Essen? Nein, wir sind die Jäger." %>% tokens() %>% tokens_proximity(phrase("das Essen")) -> res, NA)
+    expect_equal(docvars(res, "proximity")$text1, c(3,2,1,1,2,3,4,5,6,7,8,9))
 })

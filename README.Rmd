@@ -110,6 +110,21 @@ docvars(tok3, "proximity")
 dfm(tok3) %>% dfm_lookup(dict1) %>% rowSums()
 ```
 
+Can we use [phrase](https://quanteda.io/reference/phrase.html)?
+
+```{r}
+tok4 <- tok1 %>% tokens_proximity(pattern = phrase("Tayyip Erdogan"))
+tok4
+```
+
+```{r}
+docvars(tok4, "proximity")
+```
+
+```{r}
+dfm(tok4) %>% dfm_lookup(dict1) %>% rowSums()
+```
+
 # Similar functions
 
 * [quanteda](https://quanteda.io/): `quanteda::tokens_select(window)`, `quanteda::fcm()`

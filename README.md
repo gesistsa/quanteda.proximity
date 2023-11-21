@@ -56,7 +56,7 @@ tok1
 #> [ ... and 31 more ]
 #> 
 #> With proximity vector(s).
-#> keywords:  turkish
+#> Pattern:  turkish
 ```
 
 You can access the proximity vectors by
@@ -150,7 +150,7 @@ tok2
 #> [ ... and 31 more ]
 #> 
 #> With proximity vector(s).
-#> keywords:  hamas
+#> Pattern:  hamas
 ```
 
 ``` r
@@ -177,7 +177,7 @@ tok3
 #> [ ... and 31 more ]
 #> 
 #> With proximity vector(s).
-#> keywords:  eu brussels
+#> Pattern:  eu brussels
 ```
 
 ``` r
@@ -195,6 +195,44 @@ docvars(tok3, "proximity")
 dfm(tok3) %>% dfm_lookup(dict1) %>% rowSums()
 #>      text1      text2 
 #> 0.02564103 0.45833333
+```
+
+Can we use [phrase](https://quanteda.io/reference/phrase.html)?
+
+``` r
+tok4 <- tok1 %>% tokens_proximity(pattern = phrase("Tayyip Erdogan"))
+tok4
+#> Tokens consisting of 2 documents.
+#> text1 :
+#>  [1] "turkish"   "president" "tayyip"    "erdogan"   ","         "in"       
+#>  [7] "his"       "strongest" "comments"  "yet"       "on"        "the"      
+#> [ ... and 26 more ]
+#> 
+#> text2 :
+#>  [1] "eu"           "policymakers" "proposed"     "the"          "new"         
+#>  [6] "agency"       "in"           "2021"         "to"           "stop"        
+#> [11] "financial"    "firms"       
+#> [ ... and 31 more ]
+#> 
+#> With proximity vector(s).
+#> Pattern:  Tayyip Erdogan
+```
+
+``` r
+docvars(tok4, "proximity")
+#> $text1
+#>  [1]  3  2  1  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22
+#> [26] 23 24 25 26 27 28 29 30 31 32 33 34 35
+#> 
+#> $text2
+#>  [1] 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44
+#> [26] 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44 44
+```
+
+``` r
+dfm(tok4) %>% dfm_lookup(dict1) %>% rowSums()
+#>      text1      text2 
+#> 0.04166667 0.04545455
 ```
 
 # Similar functions
