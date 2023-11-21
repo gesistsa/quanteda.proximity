@@ -9,6 +9,7 @@ tokens_proximity(
   pattern,
   get_min = TRUE,
   valuetype = c("glob", "regex", "fixed"),
+  case_insensitive = TRUE,
   count_from = 1,
   tolower = TRUE,
   keep_acronyms = FALSE
@@ -22,6 +23,8 @@ tokens_proximity(
 \item{get_min}{logical, whether to return only the minimum distance or raw distance information; it is more relevant when \code{keywords} have more than one word. See details.}
 
 \item{valuetype}{See \link[quanteda:valuetype]{quanteda::valuetype}.}
+
+\item{case_insensitive}{logical, see \link[quanteda:valuetype]{quanteda::valuetype}.}
 
 \item{count_from}{numeric, how proximity is counted from when \code{get_min} is \code{TRUE}. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behaviour of \code{\link[=dfm.tokens_with_proximity]{dfm.tokens_with_proximity()}}.}
 

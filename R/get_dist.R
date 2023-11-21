@@ -11,16 +11,16 @@ cal_dist_singular <- function(from, to, poss) {
     abs(from - poss)
 }
 
-get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype) {
+get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype, case_insensitive) {
     output <- list()
-    idx <- quanteda::index(x, pattern = pattern, valuetype = valuetype)
+    idx <- quanteda::index(x, pattern = pattern, valuetype = valuetype, case_insensitive = case_insensitive)
     singular_pattern_only <- all(idx$to == idx$from)
     if (singular_pattern_only) {
         cal_func <- cal_dist_singular
     } else {
         cal_func <- cal_dist
     }
-    nt <- quanteda::ntoken(x)
+    nt <- as.numeric(quanteda::ntoken(x))
     dn <- quanteda::docnames(x)
     for (i in seq_along(x)) {
         if (dn[i] %in% idx$docname) {
@@ -40,6 +40,14 @@ get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype)
     return(output)
 }
 
+pp <- function(pattern) {
+    ## pretty print the pattern if it contains phrases
+    if (!is.list(pattern)) {
+        return(pattern)
+    }
+    vapply(pattern, paste, collapse = " ", character(1))
+}
+
 #' Extract Proximity Information
 #'
 #' This function extracts distance information from a [quanteda::tokens()] object.
@@ -47,6 +55,7 @@ get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype)
 #' @param pattern pattern for selecting keywords, see [quanteda::pattern] for details.
 #' @param get_min logical, whether to return only the minimum distance or raw distance information; it is more relevant when `keywords` have more than one word. See details.
 #' @param valuetype See [quanteda::valuetype].
+#' @param case_insensitive logical, see [quanteda::valuetype].
 #' @param count_from numeric, how proximity is counted from when `get_min` is `TRUE`. The keyword is assigned with this proximity. Default to 1 (not zero) to prevent division by 0 with the default behaviour of [dfm.tokens_with_proximity()].
 #' @param tolower logical, convert all features to lowercase.
 #' @param keep_acronyms logical, if `TRUE`, do not lowercase any all-uppercase words. See [quanteda::tokens_tolower()].
@@ -81,7 +90,7 @@ get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype)
 #' tok1 %>% tokens_proximity("britain")
 #' @seealso [dfm.tokens_with_proximity()] [quanteda::tokens()]
 #' @export
-tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), count_from = 1,
+tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "regex", "fixed"), case_insensitive = TRUE, count_from = 1,
                              tolower = TRUE, keep_acronyms = FALSE) {
     if (!inherits(x, "tokens") && !inherits(x, "tokens_with_proximity")) {
         stop("x is not a `tokens` or `tokens_with_proximity` object.", call. = FALSE)
@@ -94,9 +103,10 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
     }
     valuetype <- match.arg(valuetype)
     toks <- x
-    proximity <- get_proximity(x = toks, pattern = pattern, get_min = get_min, count_from = count_from, valuetype = valuetype)
+    proximity <- get_proximity(x = toks, pattern = pattern, get_min = get_min, count_from = count_from,
+                               valuetype = valuetype, case_insensitive = case_insensitive)
     quanteda::docvars(toks)$proximity <- I(proximity)
-    quanteda::meta(toks, field = "pattern") <- pattern
+    quanteda::meta(toks, field = "pattern") <- pp(pattern)
     quanteda::meta(toks, field = "get_min") <- get_min
     quanteda::meta(toks, field = "tolower") <- tolower
     quanteda::meta(toks, field = "keep_acronyms") <- keep_acronyms
