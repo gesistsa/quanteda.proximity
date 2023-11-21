@@ -11,20 +11,6 @@ cal_dist_singular <- function(from, to, poss) {
     abs(from - poss)
 }
 
-## cal_proximity <- function(tokenized_text, get_min = TRUE, count_from = 1, num_tokens, idx) {
-##     ## target_idx <- which(tokenized_text %in% keywords_poss)
-##     poss <- seq_len(num_tokens)
-##     ##idx <- quanteda::index(tokenized_text, pattern, valuetype = valuetype)
-##     if (! %in% idx$docname) {
-##         return(rep(length(poss) + count_from, length(poss)))
-##     }
-##     res <- mapply(cal_dist, from = idx$from, to = idx$to, MoreArgs = list("poss" = poss))
-##     if (get_min) {
-##         return(row_mins_c(res) + count_from)
-##     }
-##     return(res)
-## }
-
 get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype) {
     output <- list()
     idx <- quanteda::index(x, pattern = pattern, valuetype = valuetype)
@@ -49,29 +35,10 @@ get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype)
         } else {
             output[[i]] <- rep(nt[i] + count_from, nt[i])
         }
-##        output[[i]] <- cal_proximity(x[i], get_min = get_min, count_from = count_from, num_tokens = nt[i], idx = idx)
     }
     names(output) <- quanteda::docnames(x)
     return(output)
 }
-
-## resolve_keywords <- function(keywords, features, valuetype) {
-    ## if (valuetype == "fixed") {
-    ##     return(keywords)
-    ## }
-    ## if (valuetype == "glob") {
-    ##     regex <- paste(utils::glob2rx(keywords), collapse = "|")
-    ## }
-    ## if (valuetype == "regex") {
-    ##     regex <- paste(keywords, collapse = "|")
-    ## }
-    ## return(grep(regex, features, value = TRUE))
-##     res <- quanteda::pattern2fixed(pattern = keywords, types = features, valuetype = valuetype)
-##     if (is.null(res)) {
-##         return(list())
-##     }
-##     return(res)
-## }
 
 #' Extract Proximity Information
 #'
@@ -126,8 +93,6 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
         x <- quanteda::tokens_tolower(x, keep_acronyms = keep_acronyms)
     }
     valuetype <- match.arg(valuetype)
-    ## Maybe this is now only for pretty print?
-    ## keywords <- resolve_keywords(pattern, attr(x, "types"), valuetype)
     toks <- x
     proximity <- get_proximity(x = toks, pattern = pattern, get_min = get_min, count_from = count_from, valuetype = valuetype)
     quanteda::docvars(toks)$proximity <- I(proximity)
