@@ -110,6 +110,9 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
     quanteda::meta(toks, field = "pattern") <- pp(pattern)
     attr(toks, "pattern") <- pattern ## custom field
     quanteda::meta(toks, field = "get_min") <- get_min
+    quanteda::meta(toks, field = "valuetype") <- valuetype
+    quanteda::meta(toks, field = "case_insensitive") <- case_insensitive
+    quanteda::meta(toks, field = "count_from") <- count_from
     quanteda::meta(toks, field = "tolower") <- tolower
     quanteda::meta(toks, field = "keep_acronyms") <- keep_acronyms
     class(toks) <- c("tokens_with_proximity")
@@ -174,6 +177,17 @@ convert.tokens_with_proximity <- function(x, to = c("data.frame"), ...) {
     return(do.call(rbind, result_list))
 }
 
+tokens_proximity_tolower <- function(x) {
+    ## update from inside
+    return(tokens_proximity(x, pattern = attr(x, "pattern"),
+                     get_min = quanteda::meta(x, "get_min"),
+                     valuetype = quanteda::meta(x, "valuetype"),
+                     case_insensitive = quanteda::meta(x, "case_insensitive"),
+                     count_from = quanteda::meta(x, "count_from"),
+                     tolower = TRUE, keep_acronyms = quanteda::meta(x, "count_from"))
+           )
+}
+
 #' Create a document-feature matrix
 #'
 #' Construct a sparse document-feature matrix from the output of [tokens_proximity()].
@@ -217,6 +231,9 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
                                       weight_function = function(x) {
                                           1 / x
                                       }, ...) {
+    if (!quanteda::meta(x, "tolower") && tolower) {
+        x <- tokens_proximity_tolower(x)
+    }
     x_attrs <- attributes(x)
     x_docvars <- quanteda::docvars(x)
     x_docnames <- attr(x, "docvars")$docname_
