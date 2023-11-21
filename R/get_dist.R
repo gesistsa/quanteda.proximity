@@ -7,6 +7,10 @@ cal_dist <- function(from, to, poss) {
     return(pmin(abs(to - poss), abs(from - poss)))
 }
 
+cal_dist_singular <- function(from, to, poss) {
+    abs(from - poss)
+}
+
 ## cal_proximity <- function(tokenized_text, get_min = TRUE, count_from = 1, num_tokens, idx) {
 ##     ## target_idx <- which(tokenized_text %in% keywords_poss)
 ##     poss <- seq_len(num_tokens)
@@ -24,12 +28,19 @@ cal_dist <- function(from, to, poss) {
 get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype) {
     output <- list()
     idx <- quanteda::index(x, pattern = pattern, valuetype = valuetype)
+    singular_pattern_only <- all(idx$to == idx$from)
+    if (singular_pattern_only) {
+        cal_func <- cal_dist_singular
+    } else {
+        cal_func <- cal_dist
+    }
     nt <- quanteda::ntoken(x)
     dn <- quanteda::docnames(x)
     for (i in seq_along(x)) {
         if (dn[i] %in% idx$docname) {
             poss <- seq_len(nt[i])
-            res <- mapply(cal_dist, from = idx$from[idx$docname == dn[i]], to = idx$to[idx$docname == dn[i]], MoreArgs = list("poss" = poss))
+            matched_rows <- idx$docname == dn[i]
+            res <- mapply(cal_func, from = idx$from[matched_rows], to = idx$to[matched_rows], MoreArgs = list("poss" = poss))
             if (get_min) {
                 output[[i]] <- row_mins_c(res) + count_from
             } else {
