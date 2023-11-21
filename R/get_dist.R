@@ -8,7 +8,7 @@ cal_dist <- function(from, to, poss) {
 }
 
 cal_dist_singular <- function(from, to, poss) {
-    abs(from - poss)
+    return(abs(from - poss))
 }
 
 get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype, case_insensitive) {
@@ -45,7 +45,7 @@ pp <- function(pattern) {
     if (!is.list(pattern)) {
         return(pattern)
     }
-    vapply(pattern, paste, collapse = " ", character(1))
+    return(vapply(pattern, paste, collapse = " ", character(1)))
 }
 
 #' Extract Proximity Information
@@ -148,14 +148,14 @@ as.tokens.tokens_with_proximity <- function(x, concatenator = "/", remove_docvar
 #' @method docvars tokens_with_proximity
 #' @export
 docvars.tokens_with_proximity <- function(x, field = NULL) {
-    quanteda::docvars(as.tokens(x, remove_docvars_proximity = FALSE), field = field)
+    return(quanteda::docvars(as.tokens(x, remove_docvars_proximity = FALSE), field = field))
 }
 
 #' @importFrom quanteda meta
 #' @method meta tokens_with_proximity
 #' @export
 meta.tokens_with_proximity <- function(x, field = NULL, type = c("user", "object", "system", "all")) {
-    quanteda::meta(as.tokens(x, remove_docvars_proximity = FALSE), field = field, type = type)
+    return(quanteda::meta(as.tokens(x, remove_docvars_proximity = FALSE), field = field, type = type))
 }
 
 #' @method convert tokens_with_proximity
