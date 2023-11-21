@@ -7,24 +7,38 @@ cal_dist <- function(from, to, poss) {
     return(pmin(abs(to - poss), abs(from - poss)))
 }
 
-cal_proximity <- function(tokenized_text, pattern, get_min = TRUE, count_from = 1, valuetype) {
-    ## target_idx <- which(tokenized_text %in% keywords_poss)
-    poss <- seq_along(as.character(tokenized_text))
-    idx <- quanteda::index(tokenized_text, pattern, valuetype = valuetype)
-    if (nrow(idx) == 0) {
-        return(rep(length(poss) + count_from, length(poss)))
-    }
-    res <- mapply(cal_dist, from = idx$from, to = idx$to, MoreArgs = list("poss" = poss))
-    if (get_min) {
-        return(row_mins_c(res) + count_from)
-    }
-    return(res)
-}
+## cal_proximity <- function(tokenized_text, get_min = TRUE, count_from = 1, num_tokens, idx) {
+##     ## target_idx <- which(tokenized_text %in% keywords_poss)
+##     poss <- seq_len(num_tokens)
+##     ##idx <- quanteda::index(tokenized_text, pattern, valuetype = valuetype)
+##     if (! %in% idx$docname) {
+##         return(rep(length(poss) + count_from, length(poss)))
+##     }
+##     res <- mapply(cal_dist, from = idx$from, to = idx$to, MoreArgs = list("poss" = poss))
+##     if (get_min) {
+##         return(row_mins_c(res) + count_from)
+##     }
+##     return(res)
+## }
 
 get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype) {
     output <- list()
+    idx <- quanteda::index(x, pattern = pattern, valuetype = valuetype)
+    nt <- quanteda::ntoken(x)
+    dn <- quanteda::docnames(x)
     for (i in seq_along(x)) {
-        output[[i]] <- cal_proximity(x[i], pattern = pattern, get_min = get_min, count_from = count_from, valuetype = valuetype)
+        if (dn[i] %in% idx$docname) {
+            poss <- seq_len(nt[i])
+            res <- mapply(cal_dist, from = idx$from[idx$docname == dn[i]], to = idx$to[idx$docname == dn[i]], MoreArgs = list("poss" = poss))
+            if (get_min) {
+                output[[i]] <- row_mins_c(res) + count_from
+            } else {
+                output[[i]] <- res
+            }
+        } else {
+            output[[i]] <- rep(nt[i] + count_from, nt[i])
+        }
+##        output[[i]] <- cal_proximity(x[i], get_min = get_min, count_from = count_from, num_tokens = nt[i], idx = idx)
     }
     names(output) <- quanteda::docnames(x)
     return(output)
