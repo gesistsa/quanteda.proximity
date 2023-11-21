@@ -3,40 +3,50 @@ row_mins_c <- function(mat) {
     .Call("row_mins_", mat, as.integer(nrow(mat)), as.integer(ncol(mat)))
 }
 
-cal_dist <- function(y, poss) {
-    return(abs(y - poss))
+cal_dist <- function(from, to, poss) {
+    return(pmin(abs(to - poss), abs(from - poss)))
 }
 
-cal_proximity <- function(tokenized_text, keywords_poss, get_min = TRUE, count_from = 1) {
-    target_idx <- which(tokenized_text %in% keywords_poss)
-    poss <- seq_along(tokenized_text)
-    if (length(target_idx) == 0) {
+cal_proximity <- function(tokenized_text, pattern, get_min = TRUE, count_from = 1, valuetype) {
+    ## target_idx <- which(tokenized_text %in% keywords_poss)
+    poss <- seq_along(as.character(tokenized_text))
+    idx <- quanteda::index(tokenized_text, pattern, valuetype = valuetype)
+    if (nrow(idx) == 0) {
         return(rep(length(poss) + count_from, length(poss)))
     }
-    res <- sapply(target_idx, cal_dist, poss = poss)
+    res <- mapply(cal_dist, from = idx$from, to = idx$to, MoreArgs = list("poss" = poss))
     if (get_min) {
         return(row_mins_c(res) + count_from)
     }
     return(res)
 }
 
-get_proximity <- function(x, keywords, get_min = TRUE, count_from = 1) {
-    keywords_poss <- which(attr(x, "types") %in% keywords)
-    return(lapply(unclass(x), cal_proximity, keywords_poss = keywords_poss, get_min = get_min, count_from = count_from))
+get_proximity <- function(x, pattern, get_min = TRUE, count_from = 1, valuetype) {
+    output <- list()
+    for (i in seq_along(x)) {
+        output[[i]] <- cal_proximity(x[i], pattern = pattern, get_min = get_min, count_from = count_from, valuetype = valuetype)
+    }
+    names(output) <- quanteda::docnames(x)
+    return(output)
 }
 
-resolve_keywords <- function(keywords, features, valuetype) {
-    if (valuetype == "fixed") {
-        return(keywords)
-    }
-    if (valuetype == "glob") {
-        regex <- paste(utils::glob2rx(keywords), collapse = "|")
-    }
-    if (valuetype == "regex") {
-        regex <- paste(keywords, collapse = "|")
-    }
-    return(grep(regex, features, value = TRUE))
-}
+## resolve_keywords <- function(keywords, features, valuetype) {
+    ## if (valuetype == "fixed") {
+    ##     return(keywords)
+    ## }
+    ## if (valuetype == "glob") {
+    ##     regex <- paste(utils::glob2rx(keywords), collapse = "|")
+    ## }
+    ## if (valuetype == "regex") {
+    ##     regex <- paste(keywords, collapse = "|")
+    ## }
+    ## return(grep(regex, features, value = TRUE))
+##     res <- quanteda::pattern2fixed(pattern = keywords, types = features, valuetype = valuetype)
+##     if (is.null(res)) {
+##         return(list())
+##     }
+##     return(res)
+## }
 
 #' Extract Proximity Information
 #'
@@ -91,11 +101,12 @@ tokens_proximity <- function(x, pattern, get_min = TRUE, valuetype = c("glob", "
         x <- quanteda::tokens_tolower(x, keep_acronyms = keep_acronyms)
     }
     valuetype <- match.arg(valuetype)
-    keywords <- resolve_keywords(pattern, attr(x, "types"), valuetype)
+    ## Maybe this is now only for pretty print?
+    ## keywords <- resolve_keywords(pattern, attr(x, "types"), valuetype)
     toks <- x
-    proximity <- get_proximity(x = toks, keywords = keywords, get_min = get_min, count_from = count_from)
+    proximity <- get_proximity(x = toks, pattern = pattern, get_min = get_min, count_from = count_from, valuetype = valuetype)
     quanteda::docvars(toks)$proximity <- I(proximity)
-    quanteda::meta(toks, field = "keywords") <- keywords
+    quanteda::meta(toks, field = "pattern") <- pattern
     quanteda::meta(toks, field = "get_min") <- get_min
     quanteda::meta(toks, field = "tolower") <- tolower
     quanteda::meta(toks, field = "keep_acronyms") <- keep_acronyms
@@ -116,7 +127,7 @@ convert_df <- function(tokens_obj, proximity_obj, doc_id) {
 print.tokens_with_proximity <- function(x, ...) {
     print(as.tokens(x), ...)
     cat("With proximity vector(s).\n")
-    cat("keywords: ", quanteda::meta(x, field = "keywords"), "\n")
+    cat("Pattern: ", quanteda::meta(x, field = "pattern"), "\n")
 }
 
 #' @importFrom quanteda as.tokens

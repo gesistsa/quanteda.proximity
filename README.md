@@ -56,7 +56,7 @@ tok1
 #> [ ... and 31 more ]
 #> 
 #> With proximity vector(s).
-#> keywords:  turkish
+#> Pattern:  turkish
 ```
 
 You can access the proximity vectors by
@@ -150,7 +150,7 @@ tok2
 #> [ ... and 31 more ]
 #> 
 #> With proximity vector(s).
-#> keywords:  hamas
+#> Pattern:  hamas
 ```
 
 ``` r
@@ -177,7 +177,7 @@ tok3
 #> [ ... and 31 more ]
 #> 
 #> With proximity vector(s).
-#> keywords:  eu brussels
+#> Pattern:  eu brussels
 ```
 
 ``` r

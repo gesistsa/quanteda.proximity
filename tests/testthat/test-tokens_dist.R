@@ -6,11 +6,11 @@ test_that("edge cases", {
     expect_error("" %>% tokens() %>% tokens_proximity("") %>% convert(), NA)
 })
 
-test_that("resolve_keywords", {
-    expect_equal(resolve_keywords(c("abc", "def"), c("abcd", "defa"), valuetype = "fixed"), c("abc", "def"))
-    expect_equal(resolve_keywords(c("abc*", "def*"), c("abcd", "defa"), valuetype = "glob"), c("abcd", "defa"))
-    expect_equal(resolve_keywords(c("a"), c("abcd", "defa"), valuetype = "regex"), c("abcd", "defa"))
-})
+## test_that("resolve_keywords", {
+##     expect_equal(resolve_keywords(c("abc", "def"), c("abcd", "defa"), valuetype = "fixed"), character(0))
+##     expect_equal(resolve_keywords(c("abc*", "def*"), c("abcd", "defa"), valuetype = "glob"), c("abcd", "defa"))
+##     expect_equal(resolve_keywords(c("a"), c("abcd", "defa"), valuetype = "regex"), c("abcd", "defa"))
+## })
 
 test_that("count_from", {
     suppressPackageStartupMessages(library(quanteda))
@@ -36,11 +36,11 @@ test_that("convert no strange rownames, #39", {
     expect_equal(rownames(res), c("1", "2", "3", "4")) ## default rownames
 })
 
-test_that("Changing keywords", {
+test_that("Changing pattern", {
     suppressPackageStartupMessages(library(quanteda))
     "this is my life" %>% tokens() %>% tokens_proximity("my") -> res
     expect_error(res2 <- tokens_proximity(res, "life"), NA)
-    expect_equal(meta(res2, "keywords"), "life")
+    expect_equal(meta(res2, "pattern"), "life")
 })
 
 test_that("token_proximity() only emit token_proximity #35", {
