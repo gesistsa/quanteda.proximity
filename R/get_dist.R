@@ -178,7 +178,7 @@ convert.tokens_with_proximity <- function(x, to = c("data.frame"), ...) {
 }
 
 tokens_proximity_tolower <- function(x) {
-    ## update from inside
+    ## update from inside, docvars(x, "proximity") is updated too.
     return(tokens_proximity(x, pattern = attr(x, "pattern"),
                      get_min = quanteda::meta(x, "get_min"),
                      valuetype = quanteda::meta(x, "valuetype"),
@@ -191,14 +191,15 @@ tokens_proximity_tolower <- function(x) {
 #' Create a document-feature matrix
 #'
 #' Construct a sparse document-feature matrix from the output of [tokens_proximity()].
-#' @param x output of [tokens_proximity()]
-#' @param tolower ignored
-#' @param remove_padding ignored
-#' @param remove_docvars_proximity boolean, remove the "proximity" document variable
-#' @param verbose ignored
-#' @param weight_function a weight function, default to invert distance
+#' @param x output of [tokens_proximity()].
+#' @param tolower convert all features to lowercase.
+#' @param remove_padding ignored.
+#' @param remove_docvars_proximity boolean, remove the "proximity" document variable.
+#' @param verbose ignored,
+#' @param weight_function a weight function, default to invert distance,
 #' @param ... not used.
 #' @importFrom quanteda dfm
+#' @return a [quanteda::dfm-class] object
 #' @details By default, words closer to keywords are weighted higher. You might change that with another `weight_function`. Please also note that `tolower` and `remove_padding` have no effect. It is because changing tokens at this point would need to recalculate the proximity vectors. Please do all the text manipulation before running [tokens_proximity()].
 #' @examples
 #' library(quanteda)
