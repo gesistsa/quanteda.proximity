@@ -185,6 +185,11 @@ tokens_proximity_tolower <- function(x) {
            )
 }
 
+## port from quanteda
+catm <- function(..., sep = " ", appendLF = FALSE) {
+    message(paste(..., sep = sep), appendLF = appendLF)
+}
+
 #' Create a document-feature matrix
 #'
 #' Construct a sparse document-feature matrix from the output of [tokens_proximity()].
@@ -241,6 +246,13 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
     if (0 %in% index) {
         index <- index + 1
         type <- c("", type)
+    }
+    if (!quanteda::meta(x, "get_min")) {
+        if (verbose) {
+            catm("Only the minimum proximity is used.\n")
+        }
+        count_from <- meta(x, "count_from")
+        attr(x, "docvars")$proximity <- lapply(quanteda::docvars(x, "proximity"), function(y) row_mins_c(y) + count_from)
     }
     val <- weight_function(unlist(quanteda::docvars(x, "proximity"), use.names = FALSE))
     temp <- Matrix::sparseMatrix(
