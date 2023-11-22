@@ -74,15 +74,15 @@
 
 
 <dt>remove_padding</dt>
-<dd><p>ignored.</p></dd>
+<dd><p>logical; if <code>TRUE</code>, remove the "pads" left as empty tokens after calling <code><a href="https://quanteda.io/reference/tokens.html" class="external-link">quanteda::tokens()</a></code> or <code><a href="https://quanteda.io/reference/tokens_select.html" class="external-link">quanteda::tokens_remove()</a></code> with <code>padding = TRUE</code>.</p></dd>
 
 
 <dt>verbose</dt>
-<dd><p>ignored,</p></dd>
+<dd><p>display messages if <code>TRUE</code>.</p></dd>
 
 
 <dt>remove_docvars_proximity</dt>
-<dd><p>boolean, remove the "proximity" document variable.</p></dd>
+<dd><p>logical, remove the "proximity" document variable.</p></dd>
 
 
 <dt>weight_function</dt>
@@ -101,7 +101,7 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>By default, words closer to keywords are weighted higher. You might change that with another <code>weight_function</code>. Please also note that <code>tolower</code> and <code>remove_padding</code> have no effect. It is because changing tokens at this point would need to recalculate the proximity vectors. Please do all the text manipulation before running <code><a href="tokens_proximity.html">tokens_proximity()</a></code>.</p>
+    <p>By default, words closer to keywords are weighted higher. You might change that with another <code>weight_function</code>.</p>
     </div>
 
     <div class="section level2">
