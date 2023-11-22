@@ -66,33 +66,39 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
-<dd><p>output of <code><a href="tokens_proximity.html">tokens_proximity()</a></code></p></dd>
+<dd><p>output of <code><a href="tokens_proximity.html">tokens_proximity()</a></code>.</p></dd>
 
 
 <dt>tolower</dt>
-<dd><p>ignored</p></dd>
+<dd><p>convert all features to lowercase.</p></dd>
 
 
 <dt>remove_padding</dt>
-<dd><p>ignored</p></dd>
+<dd><p>ignored.</p></dd>
 
 
 <dt>verbose</dt>
-<dd><p>ignored</p></dd>
+<dd><p>ignored,</p></dd>
 
 
 <dt>remove_docvars_proximity</dt>
-<dd><p>boolean, remove the "proximity" document variable</p></dd>
+<dd><p>boolean, remove the "proximity" document variable.</p></dd>
 
 
 <dt>weight_function</dt>
-<dd><p>a weight function, default to invert distance</p></dd>
+<dd><p>a weight function, default to invert distance,</p></dd>
 
 
 <dt>...</dt>
 <dd><p>not used.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>a <a href="https://quanteda.io/reference/dfm-class.html" class="external-link">quanteda::dfm</a> object</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>By default, words closer to keywords are weighted higher. You might change that with another <code>weight_function</code>. Please also note that <code>tolower</code> and <code>remove_padding</code> have no effect. It is because changing tokens at this point would need to recalculate the proximity vectors. Please do all the text manipulation before running <code><a href="tokens_proximity.html">tokens_proximity()</a></code>.</p>
