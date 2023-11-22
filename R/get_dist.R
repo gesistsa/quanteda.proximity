@@ -60,7 +60,7 @@ pp <- function(pattern) {
 #' @param tolower logical, convert all features to lowercase.
 #' @param keep_acronyms logical, if `TRUE`, do not lowercase any all-uppercase words. See [quanteda::tokens_tolower()].
 #' @details Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: \["I", "eat", "this", "apple"\] and suppose "eat" is the keyword. The vector of minimum proximity for each word from "eat" is \[2, 1, 2, 3\], if `count_from` is 1. In another case: \["I", "wash", "and", "eat", "this", "apple"\] and \["wash", "eat"\] are the keywords. The minimal distance vector is \[2, 1, 2, 1, 2, 3\]. If `get_min` is `FALSE`, the output is a list of two vectors. For "wash", the distance vector is \[1, 0, 1, 2, 3\]. For "eat", \[3, 2, 1, 0, 1, 2\].
-#' Please conduct all text maniputation tasks with `tokens_*()` functions before calling this function. To convert the output back to a `tokens` object, use [quanteda::as.tokens()].
+#' Please conduct all text manipulation tasks with `tokens_*()` functions before calling this function. To convert the output back to a `tokens` object, use [quanteda::as.tokens()].
 #' @return a `tokens_with_proximity` object. It is similar to [quanteda::tokens()], but only [dfm.tokens_with_proximity()], [quanteda::convert()], [quanteda::docvars()], and [quanteda::meta()] methods are available. A `tokens_with_proximity` has a modified [print()] method. Also, additional data slots are included
 #' * a document variable `proximity`
 #' * metadata slots for all arguments used
