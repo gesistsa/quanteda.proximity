@@ -44,3 +44,11 @@ test_that("remove_padding", {
     output <- toks %>% tokens_proximity("a") %>% dfm(remove_padding = TRUE)
     expect_false("" %in% colnames(output))
 })
+
+test_that("force get_min #48", {
+    suppressPackageStartupMessages(library(quanteda))
+    toks <- tokens(c("a a b c", "A B C D"))
+    toks %>% tokens_proximity("a", get_min = FALSE) -> temp2
+    expect_error(dfm(temp2), NA)
+    expect_message(dfm(temp2, verbose = TRUE), "Only the minimum proximity is used")
+})
