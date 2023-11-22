@@ -21,11 +21,11 @@
 
 \item{tolower}{convert all features to lowercase.}
 
-\item{remove_padding}{ignored.}
+\item{remove_padding}{logical; if \code{TRUE}, remove the "pads" left as empty tokens after calling \code{\link[quanteda:tokens]{quanteda::tokens()}} or \code{\link[quanteda:tokens_select]{quanteda::tokens_remove()}} with \code{padding = TRUE}.}
 
-\item{verbose}{ignored,}
+\item{verbose}{display messages if \code{TRUE}.}
 
-\item{remove_docvars_proximity}{boolean, remove the "proximity" document variable.}
+\item{remove_docvars_proximity}{logical, remove the "proximity" document variable.}
 
 \item{weight_function}{a weight function, default to invert distance,}
 
@@ -38,7 +38,7 @@ a \link[quanteda:dfm-class]{quanteda::dfm} object
 Construct a sparse document-feature matrix from the output of \code{\link[=tokens_proximity]{tokens_proximity()}}.
 }
 \details{
-By default, words closer to keywords are weighted higher. You might change that with another \code{weight_function}. Please also note that \code{tolower} and \code{remove_padding} have no effect. It is because changing tokens at this point would need to recalculate the proximity vectors. Please do all the text manipulation before running \code{\link[=tokens_proximity]{tokens_proximity()}}.
+By default, words closer to keywords are weighted higher. You might change that with another \code{weight_function}.
 }
 \examples{
 library(quanteda)

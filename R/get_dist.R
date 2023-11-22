@@ -62,11 +62,8 @@ pp <- function(pattern) {
 #' @details Proximity is measured by the number of tokens away from the keyword. Given a tokenized sentence: \["I", "eat", "this", "apple"\] and suppose "eat" is the keyword. The vector of minimum proximity for each word from "eat" is \[2, 1, 2, 3\], if `count_from` is 1. In another case: \["I", "wash", "and", "eat", "this", "apple"\] and \["wash", "eat"\] are the keywords. The minimal distance vector is \[2, 1, 2, 1, 2, 3\]. If `get_min` is `FALSE`, the output is a list of two vectors. For "wash", the distance vector is \[1, 0, 1, 2, 3\]. For "eat", \[3, 2, 1, 0, 1, 2\].
 #' Please conduct all text maniputation tasks with `tokens_*()` functions before calling this function. To convert the output back to a `tokens` object, use [quanteda::as.tokens()].
 #' @return a `tokens_with_proximity` object. It is similar to [quanteda::tokens()], but only [dfm.tokens_with_proximity()], [quanteda::convert()], [quanteda::docvars()], and [quanteda::meta()] methods are available. A `tokens_with_proximity` has a modified [print()] method. Also, additional data slots are included
-#' * a document variation `dist`
-#' * a metadata slot `keywords`
-#' * a metadata slot `get_min`
-#' * a metadata slot `tolower`
-#' * a metadata slot `keep_acronyms`
+#' * a document variable `proximity`
+#' * metadata slots for all arguments used
 #' @examples
 #' library(quanteda)
 #' tok1 <- data_char_ukimmig2010 %>%
@@ -193,14 +190,14 @@ tokens_proximity_tolower <- function(x) {
 #' Construct a sparse document-feature matrix from the output of [tokens_proximity()].
 #' @param x output of [tokens_proximity()].
 #' @param tolower convert all features to lowercase.
-#' @param remove_padding ignored.
-#' @param remove_docvars_proximity boolean, remove the "proximity" document variable.
-#' @param verbose ignored,
+#' @param remove_padding logical; if `TRUE`, remove the "pads" left as empty tokens after calling [quanteda::tokens()] or [quanteda::tokens_remove()] with `padding = TRUE`.
+#' @param remove_docvars_proximity logical, remove the "proximity" document variable.
+#' @param verbose  display messages if `TRUE`.
 #' @param weight_function a weight function, default to invert distance,
 #' @param ... not used.
 #' @importFrom quanteda dfm
 #' @return a [quanteda::dfm-class] object
-#' @details By default, words closer to keywords are weighted higher. You might change that with another `weight_function`. Please also note that `tolower` and `remove_padding` have no effect. It is because changing tokens at this point would need to recalculate the proximity vectors. Please do all the text manipulation before running [tokens_proximity()].
+#' @details By default, words closer to keywords are weighted higher. You might change that with another `weight_function`.
 #' @examples
 #' library(quanteda)
 #' tok1 <- data_char_ukimmig2010 %>%
@@ -262,5 +259,9 @@ dfm.tokens_with_proximity <- function(x, tolower = TRUE, remove_padding = FALSE,
         x_docvars$proximity <- NULL
     }
     quanteda::docvars(output) <- x_docvars
+    if (remove_padding) {
+        output <- quanteda::dfm_select(output, pattern = "", select = "remove", valuetype = "fixed", padding = FALSE,
+                                       verbose = verbose)
+    }
     return(output)
 }

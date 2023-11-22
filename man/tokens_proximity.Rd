@@ -35,11 +35,8 @@ tokens_proximity(
 \value{
 a \code{tokens_with_proximity} object. It is similar to \code{\link[quanteda:tokens]{quanteda::tokens()}}, but only \code{\link[=dfm.tokens_with_proximity]{dfm.tokens_with_proximity()}}, \code{\link[quanteda:convert]{quanteda::convert()}}, \code{\link[quanteda:docvars]{quanteda::docvars()}}, and \code{\link[quanteda:meta]{quanteda::meta()}} methods are available. A \code{tokens_with_proximity} has a modified \code{\link[=print]{print()}} method. Also, additional data slots are included
 \itemize{
-\item a document variation \code{dist}
-\item a metadata slot \code{keywords}
-\item a metadata slot \code{get_min}
-\item a metadata slot \code{tolower}
-\item a metadata slot \code{keep_acronyms}
+\item a document variable \code{proximity}
+\item metadata slots for all arguments used
 }
 }
 \description{
