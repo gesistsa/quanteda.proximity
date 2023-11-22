@@ -17,19 +17,22 @@
 )
 }
 \arguments{
-\item{x}{output of \code{\link[=tokens_proximity]{tokens_proximity()}}}
+\item{x}{output of \code{\link[=tokens_proximity]{tokens_proximity()}}.}
 
-\item{tolower}{ignored}
+\item{tolower}{convert all features to lowercase.}
 
-\item{remove_padding}{ignored}
+\item{remove_padding}{ignored.}
 
-\item{verbose}{ignored}
+\item{verbose}{ignored,}
 
-\item{remove_docvars_proximity}{boolean, remove the "proximity" document variable}
+\item{remove_docvars_proximity}{boolean, remove the "proximity" document variable.}
 
-\item{weight_function}{a weight function, default to invert distance}
+\item{weight_function}{a weight function, default to invert distance,}
 
 \item{...}{not used.}
+}
+\value{
+a \link[quanteda:dfm-class]{quanteda::dfm} object
 }
 \description{
 Construct a sparse document-feature matrix from the output of \code{\link[=tokens_proximity]{tokens_proximity()}}.
