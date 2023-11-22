@@ -238,6 +238,6 @@ dfm(tok4) %>% dfm_lookup(dict1) %>% rowSums()
 # Similar functions
 
   - [quanteda](https://quanteda.io/): `quanteda::tokens_select(window)`,
-    `quanteda::fcm()`
+    `quanteda::fcm()`, `quanteda::index()`
   - [qdap](https://trinker.github.io/qdap): `qdap::word_proximity()`,
     `qdap::weight()`
