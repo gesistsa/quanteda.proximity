@@ -29,3 +29,10 @@ test_that("tolower", {
     res %>% dfm(tolower = TRUE) -> output
     expect_true("turkish" %in% colnames(output))
 })
+
+test_that("Padding #46", {
+    suppressPackageStartupMessages(library(quanteda))
+    toks <- tokens(c("a b c", "A B C D")) %>% tokens_remove("b", padding = TRUE)
+    expect_error(toks %>% tokens_proximity("a") %>% dfm(), NA)
+})
+
